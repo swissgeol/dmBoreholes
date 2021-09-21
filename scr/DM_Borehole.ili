@@ -1,13 +1,15 @@
 INTERLIS 2.3;
 
+!! BEMERKUNGEN
+!! Attribute, deren Datentypen auf TEXT*1111 gesetzt sind sollen mittels Enumeration oder Codelist befüllt werden
+!! 
 
 !!****************************************
 !! MODEL
 !!****************************************
-CONTRACTED MODEL DMBoreholes (en) 
+MODEL DMBoreholes (en) 
 AT "mailto:U80773132@localhost" 
-VERSION "2021-09-21"  =
-
+VERSION "2021-09-21" =
 
 !!****************************************
 !! IMPORTS
@@ -16,53 +18,93 @@ VERSION "2021-09-21"  =
   IMPORTS CatalogueObjects_V1,CatalogueObjectTrees_V1,LocalisationCH_V1;
   IMPORTS DMAssetsCatalogues;
 
+
 !!****************************************
 !! DOMAINES
 !!****************************************   
   DOMAIN
+    !!Strukur für die Modellierung von Adressen
+    STRUCTURE Adress =
+      Street : TEXT*20;
+      Housenumber : TEXT*5;
+      PLZ : TEXT*5;
+      Locality : MANDATORY TEXT*20;
+      Country : MANDATORY TEXT*20;
+    END Adress;
   
   
-  
+!!****************************************
+!! TOPIC 
+!!****************************************
   TOPIC InnerCore =
-  	
+    OID AS INTERLIS.UUIDOID;
+  DEPENDS ON DMAssetsCatalogues.Catalogues;
+
+
+    !! Klasse für die Beschreibung des Bohrstandorts
+    CLASS BoreholeLocation =
+      !! Lage des Bohransatzpunktes
+      Geometry : GeometryCHLV95_V1.Coord2;
+      !! Räumliches Referenzsystem (Angabe als EPSG)
+      SRS : MANDATORY TEXT*1111;
+      !! Höhenangabe (im Meter über Meer)
+      ElevationZ : MANDATORY 0.000 .. 9999.999;
+      !! Höhenreferenzsystem
+      HRS : MANDATORY TEXT*1111;
+    END BoreholeLocation;
+
+    !! Klasse für die Beschreibung der wesentlichen Metadaten einer Bohrung = Stammdaten
     CLASS Borehole =
-      Kind : MANDATORY BoreholeModelLookUp_V1_0.Geology_Catalogues.Ref_Ibor102;
-      Location_X : MANDATORY Coord2;
-      Location_Y : MANDATORY Coord2;
-      SRS : MANDATORY BoreholeModelLookUp_V1_0.Geology_Catalogues.Ref_Ibor105;
-      Elevation_Z : MANDATORY 0.000 .. 9999.999 [m.�.M];
-      HRS : MANDATORY BoreholeModelLookUp_V1_0.Geology_Catalogues.Ref_Ibor107;
+      !! Generalisierter Bohrtyp
+      Kind : MANDATORY TEXT*1111;
       Length : MANDATORY 0.000 .. 9999.999 [INTERLIS.m];
-      Orientation : MANDATORY BoreholeModelLookUp_V1_0.Geology_Catalogues.Ref_Ibor109;
-      Date : MANDATORY XMLDate;
+      Orientation : MANDATORY TEXT*1111;
+      Date : MANDATORY FORMAT INTERLIS.XMLDate "1582-1-1" .. "2222-12-31";
       Restriction : MANDATORY BOOLEAN;
-      Restricted_until : MANDATORY XMLDate;
+      DateRestricted : MANDATORY FORMAT INTERLIS.XMLDate "1582-1-1" .. "2222-12-31";
     END Borehole;
     
+
+    !! Klasse für die Beschreibung der Kontaktinformationen, z.B. Bohrfirma, Erfasser der Bohrung, Auftraggeber, ...
     CLASS Contact =
-    	Kind : MANDATORY BoreholeModelLookUp_V1_0.Geology_Catalogues.Ref_Icon101;
-    	Name : MANDATORY TEXT*254;
-    	Address : TEXT*254;
-    	Email : TEXT*254;
-    	Tel : TEXT*254;
-    	Website : TEXT*254;
- 		END Contact
+      !! Referenz auf einen Eintrag inder zentralen Adress-Datenbank (ZAD)
+      IDZAD : TEXT*20;
+
+      !! Information zur Art des Kontaktes (z.B. kantonale Bewilligungsbehörde, Bundesbehörde, Privatwirtschaft: begleitendes Fachbüro, etc.). Mindestkontakt ist nach Möglichkeit immer die Bewilligungsbehörde.  
+      Kind : MANDATORY DMAssetsCatalogues.Catalogues.ContactKindRef;
+
+      !! Name des Kontakts
+      Name : MANDATORY TEXT*20;
+
+      !! Adresse: die Struktur dieses Attributes ist in der Struktur "Adress" beschrieben
+      Adress : Adress;
+
+      !! Telefon-Nr., gemäss definierter Struktur von Tel. Nummern
+      Telefon : TEXT*20;
+
+      !! e-mail-Adresse, gemäss definierter Struktur von e-mail-Adressen
+      Email : URI;
+
+      !! URL von Websites, gemäss definierter Struktur von URLs
+      Website : URI;
+
+    END Contact;
     
   END InnerCore;
   
   
+  TOPIC ExtendedCore =
+    
+    CLASS BoreholeExtended
+    EXTENDS DMBoreholes.InnerCore.Borehole =
+      TitleOriginal : TEXT*254;
+      Method : TEXT*1111;
+      Purpose : TEXT*1111;
+     Status : TEXT*1111;
+      DepthBedrock : 0.000 .. 9999.999 [INTERLIS.m];
+        DepthGW : BOOLEAN;
+    END BoreholeExtended;
+
+  END ExtendedCore;
   
-  
-  TOPIC Extended_Core =
-  	
-  	CLASS Borehole_extended
-  	EXTENDS Inner_Core.Borehole =
-  		Original_Name : TEXT*254;
-  		Method : BoreholeModelLookUp_V1_0.Geology_Catalogues.Ref_Ebor102;
-  		Purpose : BoreholeModelLookUp_V1_0.Geology_Catalogues.Ref_Ebor103;
-  		Status : BoreholeModelLookUp_V1_0.Geology_Catalogues.Ref_Ebor104;
-  		Depth_Bedrock : 0.000 .. 9999.999 [INTERLIS.m];
-  		Depth_GW : BOOLEAN;
-  	END Borehole_extended;
-  
-END DM_Borehole_Data_V1_0.
+END DMBoreholes.
