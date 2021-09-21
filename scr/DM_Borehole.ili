@@ -1,0 +1,68 @@
+INTERLIS 2.3;
+
+
+!!****************************************
+!! MODEL
+!!****************************************
+CONTRACTED MODEL DMBoreholes (en) 
+AT "mailto:U80773132@localhost" 
+VERSION "2021-09-21"  =
+
+
+!!****************************************
+!! IMPORTS
+!!****************************************
+  IMPORTS GeometryCHLV95_V1,Units;
+  IMPORTS CatalogueObjects_V1,CatalogueObjectTrees_V1,LocalisationCH_V1;
+  IMPORTS DMAssetsCatalogues;
+
+!!****************************************
+!! DOMAINES
+!!****************************************   
+  DOMAIN
+  
+  
+  
+  TOPIC InnerCore =
+  	
+    CLASS Borehole =
+      Kind : MANDATORY BoreholeModelLookUp_V1_0.Geology_Catalogues.Ref_Ibor102;
+      Location_X : MANDATORY Coord2;
+      Location_Y : MANDATORY Coord2;
+      SRS : MANDATORY BoreholeModelLookUp_V1_0.Geology_Catalogues.Ref_Ibor105;
+      Elevation_Z : MANDATORY 0.000 .. 9999.999 [m.ü.M];
+      HRS : MANDATORY BoreholeModelLookUp_V1_0.Geology_Catalogues.Ref_Ibor107;
+      Length : MANDATORY 0.000 .. 9999.999 [INTERLIS.m];
+      Orientation : MANDATORY BoreholeModelLookUp_V1_0.Geology_Catalogues.Ref_Ibor109;
+      Date : MANDATORY XMLDate;
+      Restriction : MANDATORY BOOLEAN;
+      Restricted_until : MANDATORY XMLDate;
+    END Borehole;
+    
+    CLASS Contact =
+    	Kind : MANDATORY BoreholeModelLookUp_V1_0.Geology_Catalogues.Ref_Icon101;
+    	Name : MANDATORY TEXT*254;
+    	Address : TEXT*254;
+    	Email : TEXT*254;
+    	Tel : TEXT*254;
+    	Website : TEXT*254;
+ 		END Contact
+    
+  END InnerCore;
+  
+  
+  
+  
+  TOPIC Extended_Core =
+  	
+  	CLASS Borehole_extended
+  	EXTENDS Inner_Core.Borehole =
+  		Original_Name : TEXT*254;
+  		Method : BoreholeModelLookUp_V1_0.Geology_Catalogues.Ref_Ebor102;
+  		Purpose : BoreholeModelLookUp_V1_0.Geology_Catalogues.Ref_Ebor103;
+  		Status : BoreholeModelLookUp_V1_0.Geology_Catalogues.Ref_Ebor104;
+  		Depth_Bedrock : 0.000 .. 9999.999 [INTERLIS.m];
+  		Depth_GW : BOOLEAN;
+  	END Borehole_extended;
+  
+END DM_Borehole_Data_V1_0.
