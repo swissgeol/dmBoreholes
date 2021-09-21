@@ -1,5 +1,3 @@
-*.dmb
-*.rsc
-*.int
-*.lk
-*.zip
+bsp/
+doc/versions
+work/
