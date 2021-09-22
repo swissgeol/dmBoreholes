@@ -31,7 +31,41 @@ VERSION "2021-09-21" =
       Locality : MANDATORY TEXT*20;
       Country : MANDATORY TEXT*20;
     END Adress;
-  
+	
+	!! Struktur für die Definition einer ID, di ein einem BAG {0..*} verwendet werden kann
+    STRUCTURE WellID =
+      !! Alphanumerische ID
+	  ID : TEXT*50;
+	  !! Flag, der angibt, ob es sich um die aktuell gültige "Haupt"-ID handelt
+	  isMainID : BOOLEAN;
+    END WellID;
+
+    !! Struktur zur Definition eines Textes, der in einem BAG {0..*} genutzt werden kann
+    STRUCTURE TextDescr =
+      !! Titel der Bohrung
+	  TextDescrAtt : TEXT*254;
+	  !! Flag, der angibt, ob es sich um den aktuell gültigen "Haupt"-Titel handelt
+	  isMainID : BOOLEAN;
+    END TextDescr; 
+	
+	!! Struktur zur Definiton der Referenzhöhe und ihres Typs
+	STRUCTURE ElevationRef =
+	  TypeElevationRef : MANDATORY (
+	    !! Kelly bushing
+		KB,
+		!! DF
+		DF,
+		!! Rotary table
+		RT,
+		!! GL
+		GL,
+		!!UET
+		UET,
+		!! andere
+		unknown
+	  );
+	  ElevationRef : -1000.000 .. 5000.000  [INTERLIS.m];
+	END ElevationRef;
   
 !!****************************************
 !! TOPIC 
@@ -47,21 +81,47 @@ VERSION "2021-09-21" =
       Geometry : GeometryCHLV95_V1.Coord2;
       !! Räumliches Referenzsystem (Angabe als EPSG)
       SRS : MANDATORY TEXT*1111;
-      !! Höhenangabe (im Meter über Meer)
-      ElevationZ : MANDATORY 0.000 .. 9999.999;
+      !! Höhe des Terrains (Ground level) am Ansatzhöhe der Bohrung (im Meter über Meer)
+      ElevationGL : MANDATORY -1000.000 .. 5000.000  [INTERLIS.m];
       !! Höhenreferenzsystem
       HRS : MANDATORY TEXT*1111;
     END BoreholeLocation;
 
-    !! Klasse für die Beschreibung der wesentlichen Metadaten einer Bohrung = Stammdaten
+
+    !! Klasse für die Beschreibung der wesentlichen Metadaten einer Bohrung = Stammdaten = Well Header
     CLASS Borehole =
-      !! Generalisierter Bohrtyp
+      !! Identifikator(en) (ID) des Asset. Wenn möglich soll die Original-ID verwendet werden.
+      ID : BAG {1 .. *} OF WellID;
+	  !! Titel bzw. Name der Bohrung
+	  TitlePublic : BAG {1..*} OF TextDescr;
+	  !! Generalisierter Bohrtyp
       Kind : MANDATORY TEXT*1111;
-      Length : MANDATORY 0.000 .. 9999.999 [INTERLIS.m];
-      Orientation : MANDATORY TEXT*1111;
-      Date : MANDATORY FORMAT INTERLIS.XMLDate "1582-1-1" .. "2222-12-31";
+	  !! Referenzhöhe der Längenmessung der Bohrung in Meter
+	  ElevationRef : MANDATORY ElevationRef;
+      !! Gemessene Länge (Measured Depth, MD) der Bohrung (im Meter)
+	  TDMeasuredDepth : MANDATORY 0.000 .. 9999.999 [INTERLIS.m];
+      !! True vertical depth (TVD) der Bohrung (im Meter)
+	  TDTrueVerticalDepth : MANDATORY 0.000 .. 9999.999 [INTERLIS.m];
+      !! TVDSS der der Bohrung (im Meter). Wikipedia:The acronym TVDSS is commonly used in the oil industry to represent TVD minus the elevation above mean sea level of the depth reference point of the well. The depth reference point is the kelly bushing in the United States and a few other nations, but is the drill floor in most places.
+	  TDTrueVerticalDepthSS : MANDATORY 0.000 .. 9999.999 [INTERLIS.m];	  
+      !! Einfallen der Bohrung am Bohransatz
+	  Orientation : MANDATORY TEXT*1111;
+	  !! Datum des Starts der Bohrarbeiten
+      DateSpud : MANDATORY FORMAT INTERLIS.XMLDate "1582-1-1" .. "2222-12-31";
+      !! Datum der Fertigstellung der Bohrung
+	  DateEnd : MANDATORY FORMAT INTERLIS.XMLDate "1582-1-1" .. "2222-12-31";
+	  !! Zugänglichkeit: frei / gesperrt
       Restriction : MANDATORY BOOLEAN;
+	  !! Ablaufdatum der Zugnagsbeschränkung, muss gesetzt werden, wenn Restriction = gesperrt
       DateRestricted : MANDATORY FORMAT INTERLIS.XMLDate "1582-1-1" .. "2222-12-31";
+	  !! Bewilligungsnummer
+	  NoPermit : TEXT*254;
+	  
+	!! ----------
+    MANDATORY CONSTRAINT
+      Restriction <> #true OR DEFINED (DateRestricted);
+	!! ----------
+	  
     END Borehole;
     
 
@@ -69,40 +129,65 @@ VERSION "2021-09-21" =
     CLASS Contact =
       !! Referenz auf einen Eintrag inder zentralen Adress-Datenbank (ZAD)
       IDZAD : TEXT*20;
-
       !! Information zur Art des Kontaktes (z.B. kantonale Bewilligungsbehörde, Bundesbehörde, Privatwirtschaft: begleitendes Fachbüro, etc.). Mindestkontakt ist nach Möglichkeit immer die Bewilligungsbehörde.  
       Kind : MANDATORY DMAssetsCatalogues.Catalogues.ContactKindRef;
-
       !! Name des Kontakts
       Name : MANDATORY TEXT*20;
-
       !! Adresse: die Struktur dieses Attributes ist in der Struktur "Adress" beschrieben
       Adress : Adress;
-
       !! Telefon-Nr., gemäss definierter Struktur von Tel. Nummern
       Telefon : TEXT*20;
-
       !! e-mail-Adresse, gemäss definierter Struktur von e-mail-Adressen
       Email : URI;
-
       !! URL von Websites, gemäss definierter Struktur von URLs
       Website : URI;
 
     END Contact;
-    
+
+!!****************************************
+!! ASSOCIATIONS
+!!****************************************
+    !! Beziehung Borehole zu BoreholeLocation die den Bohransatzpunkt definiert
+    ASSOCIATION Borehole_BoreholeLocation_SurfaceLocation =
+      StartedBorehole -- {1} Borehole;
+      SurfaceLocation -- {1} BoreholeLocation;
+    END Borehole_BoreholeLocation_SurfaceLocation;
+	
+    !! Beziehung Borehole zu BoreholeLocation die den Bohrendpunkt definiert
+    ASSOCIATION Borehole_BoreholeLocation_TDLocation =
+      EndedBorehole -- {1} Borehole;
+      TDLocation -- {1} BoreholeLocation;
+    END Borehole_BoreholeLocation_TDLocation;
+
+    !! Operator
+    ASSOCIATION Borehole_Contact_Operator =
+      OperatedBorehole -- {1..*} Borehole;
+      Operator -- {0..*} Contact;
+    END Borehole_Contact_Operator;
+
+    !! Contractor
+    ASSOCIATION Borehole_Contact_Contractor =
+      ContractedBorehole -- {1..*} Borehole;
+      Contractor -- {0..*} Contact;
+    END Borehole_Contact_Contractor; 
+   
   END InnerCore;
   
   
   TOPIC ExtendedCore =
-    
+     OID AS INTERLIS.UUIDOID;
+  DEPENDS ON DMAssetsCatalogues.Catalogues;
+  
     CLASS BoreholeExtended
     EXTENDS DMBoreholes.InnerCore.Borehole =
-      TitleOriginal : TEXT*254;
+      TitleOriginal : TextDescr;
       Method : TEXT*1111;
       Purpose : TEXT*1111;
-     Status : TEXT*1111;
+	  !! Ziel der Bohrung. Auf welches Target wird gebohrt? Evtl. Enummaration definieren
+	  Target : TEXT*254;
+      Status : TEXT*1111;
       DepthBedrock : 0.000 .. 9999.999 [INTERLIS.m];
-        DepthGW : BOOLEAN;
+      DepthGW : BOOLEAN;
     END BoreholeExtended;
 
   END ExtendedCore;
