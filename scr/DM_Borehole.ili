@@ -59,13 +59,18 @@ VERSION "2021-09-21" =
 		RT,
 		!! GL
 		GL,
-		!!UET
+		!!UET = Upper edge tube = OKR = Oberkante Rohr
 		UET,
-		!! andere
+		!! unbekannt (nur für alte Daten)
 		unknown
 	  );
 	  ElevationRef : -1000.000 .. 5000.000  [INTERLIS.m];
 	END ElevationRef;
+	
+	!! Struktur zur Definition der möglichen Stati einer Bohrung in einem BAG {0..*} 
+	STRUCTURE Status =
+	  Status : TEXT*1111;
+	END Status;
   
 !!****************************************
 !! TOPIC 
@@ -96,7 +101,7 @@ VERSION "2021-09-21" =
 	  TitlePublic : BAG {1..*} OF TextDescr;
 	  !! Generalisierter Bohrtyp
       Kind : MANDATORY TEXT*1111;
-	  !! Referenzhöhe der Längenmessung der Bohrung in Meter
+	  !! Referenzhöhe der Längenmessung der Bohrung in Meter (Diese Angabe muss der Referenzhöhe dee Hauptprofils aus der Klasse ExtendedCore.BoreholeExtended.ElevationRef entsprechen)
 	  ElevationRef : MANDATORY ElevationRef;
       !! Gemessene Länge (Measured Depth, MD) der Bohrung (im Meter)
 	  TDMeasuredDepth : MANDATORY 0.000 .. 9999.999 [INTERLIS.m];
@@ -176,7 +181,7 @@ VERSION "2021-09-21" =
   
   TOPIC ExtendedCore =
      OID AS INTERLIS.UUIDOID;
-  DEPENDS ON DMAssetsCatalogues.Catalogues;
+  DEPENDS ON DMBoreholes.InnerCore,DMAssetsCatalogues.Catalogues;
   
     CLASS BoreholeExtended
     EXTENDS DMBoreholes.InnerCore.Borehole =
@@ -185,11 +190,47 @@ VERSION "2021-09-21" =
       Purpose : TEXT*1111;
 	  !! Ziel der Bohrung. Auf welches Target wird gebohrt? Evtl. Enummaration definieren
 	  Target : TEXT*254;
-      Status : TEXT*1111;
+      Status : BAG {1..*} OF Status;
       DepthBedrock : 0.000 .. 9999.999 [INTERLIS.m];
       DepthGW : BOOLEAN;
     END BoreholeExtended;
+	
+	
+	CLASS Stack =
+	  !! Art des Profils, z.B. Lithologisch/stratigrafisches Profil, geotechnisches Profil, Strukturprofil, Hydrogeologiesches Profil (konkrete Werte sind zu definieren)
+	  Kind : TEXT*1111;
+	  !! Type des Profils --> FRAGE: ist dieses Attribut noch erforderlich?
+	  Type : TEXT*1111;
+	  !! Angabe, ob es sich bei diesem Profil um das Hauptprifl handelt
+	  isMain : MANDATORY BOOLEAN;
+	  !! Referenzhöhe der Längenmessung des vorliegenden Profils in Meter
+	  ElevationRef : MANDATORY ElevationRef;
+      !! Bemerkung zum vorliegenden Profil	  
+	  Remark : TEXT*254;
+	  	  
+	END Stack;
+
+
+!!****************************************
+!! ASSOCIATIONS
+!!****************************************
+    ASSOCIATION Borehole_Stack =
+      StackedBorehole (EXTERNAL) -- {1} DMBoreholes.InnerCore.Borehole;
+      BoreholeStack -- {0..*} Stack;
+    END Borehole_Stack;
+
 
   END ExtendedCore;
+
+!!****************************************
+!! TOPIC 
+!!****************************************
+
+  TOPIC Geology =
+     OID AS INTERLIS.UUIDOID;
+  DEPENDS ON DMAssetsCatalogues.Catalogues;
   
+  
+  END Geology;
+
 END DMBoreholes.
