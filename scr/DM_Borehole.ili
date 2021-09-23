@@ -16,14 +16,20 @@ VERSION "2021-09-21" =
 !!****************************************
   IMPORTS GeometryCHLV95_V1,Units;
   IMPORTS CatalogueObjects_V1,CatalogueObjectTrees_V1,LocalisationCH_V1;
-  IMPORTS DMAssetsCatalogues;
+  IMPORTS DMGeolAssets,DMAssetsCatalogues;
 
 
 !!****************************************
-!! DOMAINES
+!! UNITS & DOMAINES
 !!****************************************   
+
+  
   DOMAIN
-    !!Strukur für die Modellierung von Adressen
+    
+	Dip = 0.00 .. 90.00 [Units.Angle_Degree];
+	Azimuth = 0.00 .. 359.99 CIRCULAR [Units.Angle_Degree]; 
+	
+	!!Strukur für die Modellierung von Adressen
     STRUCTURE Adress =
       Street : TEXT*20;
       Housenumber : TEXT*5;
@@ -77,7 +83,7 @@ VERSION "2021-09-21" =
 !!****************************************
   TOPIC InnerCore =
     OID AS INTERLIS.UUIDOID;
-  DEPENDS ON DMAssetsCatalogues.Catalogues;
+  DEPENDS ON DMGeolAssets.CoreGeolAsset,DMAssetsCatalogues.Catalogues;
 
 
     !! Klasse für die Beschreibung des Bohrstandorts
@@ -130,25 +136,6 @@ VERSION "2021-09-21" =
     END Borehole;
     
 
-    !! Klasse für die Beschreibung der Kontaktinformationen, z.B. Bohrfirma, Erfasser der Bohrung, Auftraggeber, ...
-    CLASS Contact =
-      !! Referenz auf einen Eintrag inder zentralen Adress-Datenbank (ZAD)
-      IDZAD : TEXT*20;
-      !! Information zur Art des Kontaktes (z.B. kantonale Bewilligungsbehörde, Bundesbehörde, Privatwirtschaft: begleitendes Fachbüro, etc.). Mindestkontakt ist nach Möglichkeit immer die Bewilligungsbehörde.  
-      Kind : MANDATORY DMAssetsCatalogues.Catalogues.ContactKindRef;
-      !! Name des Kontakts
-      Name : MANDATORY TEXT*20;
-      !! Adresse: die Struktur dieses Attributes ist in der Struktur "Adress" beschrieben
-      Adress : Adress;
-      !! Telefon-Nr., gemäss definierter Struktur von Tel. Nummern
-      Telefon : TEXT*20;
-      !! e-mail-Adresse, gemäss definierter Struktur von e-mail-Adressen
-      Email : URI;
-      !! URL von Websites, gemäss definierter Struktur von URLs
-      Website : URI;
-
-    END Contact;
-
 !!****************************************
 !! ASSOCIATIONS
 !!****************************************
@@ -161,19 +148,19 @@ VERSION "2021-09-21" =
     !! Beziehung Borehole zu BoreholeLocation die den Bohrendpunkt definiert
     ASSOCIATION Borehole_BoreholeLocation_TDLocation =
       EndedBorehole -- {1} Borehole;
-      TDLocation -- {1} BoreholeLocation;
+      TDLocation -- {0..1} BoreholeLocation;
     END Borehole_BoreholeLocation_TDLocation;
 
     !! Operator
     ASSOCIATION Borehole_Contact_Operator =
       OperatedBorehole -- {1..*} Borehole;
-      Operator -- {0..*} Contact;
+      Operator (EXTERNAL) -- {0..*} DMGeolAssets.CoreGeolAsset.Contact;
     END Borehole_Contact_Operator;
 
     !! Contractor
     ASSOCIATION Borehole_Contact_Contractor =
       ContractedBorehole -- {1..*} Borehole;
-      Contractor -- {0..*} Contact;
+      Contractor (EXTERNAL) -- {0..*} DMGeolAssets.CoreGeolAsset.Contact;
     END Borehole_Contact_Contractor; 
    
   END InnerCore;
@@ -182,7 +169,15 @@ VERSION "2021-09-21" =
   TOPIC ExtendedCore =
      OID AS INTERLIS.UUIDOID;
   DEPENDS ON DMBoreholes.InnerCore,DMAssetsCatalogues.Catalogues;
-  
+
+    !! Typ der Erfassung
+    STRUCTURE StackCreationType =
+	  !! Typ der Erfassung des Profils (Originalaufnahmen, Neuinpertretation)  
+	  Type : TEXT*1111;
+	  !! Benennung des Projekts in dem das Profil erfasst wurde.
+	  Project : TEXT*254;
+	END StackCreationType;
+ 
     CLASS BoreholeExtended
     EXTENDS DMBoreholes.InnerCore.Borehole =
       TitleOriginal : TextDescr;
@@ -198,9 +193,9 @@ VERSION "2021-09-21" =
 	
 	CLASS Stack =
 	  !! Art des Profils, z.B. Lithologisch/stratigrafisches Profil, geotechnisches Profil, Strukturprofil, Hydrogeologiesches Profil (konkrete Werte sind zu definieren)
-	  Kind : TEXT*1111;
-	  !! Type des Profils --> FRAGE: ist dieses Attribut noch erforderlich?
-	  Type : TEXT*1111;
+	  Kind : MANDATORY TEXT*1111;
+	  !! Früher Attribut "Type": Type des Profils (Originalaufnahme, Neuinterpretation) --> FRAGE: ist dieses Attribut noch erforderlich?
+	  StackCreationType : MANDATORY StackCreationType;
 	  !! Angabe, ob es sich bei diesem Profil um das Hauptprifl handelt
 	  isMain : MANDATORY BOOLEAN;
 	  !! Referenzhöhe der Längenmessung des vorliegenden Profils in Meter
@@ -228,9 +223,77 @@ VERSION "2021-09-21" =
 
   TOPIC Geology =
      OID AS INTERLIS.UUIDOID;
-  DEPENDS ON DMAssetsCatalogues.Catalogues;
+  DEPENDS ON DMBoreholes.ExtendedCore,DMAssetsCatalogues.Catalogues;
   
-  
+    !! Beschreibung der erbohrte geologische Einheit, so wie diese im Bohrprofil wiedergegeben ist
+    CLASS GeolLayer =
+	  !! Tiefe der ersten lithologischen Grenze in gebohrten Metern (Measured Depth)
+	  DepthFrom : MANDATORY 0.000 .. 9999.999 [INTERLIS.m];
+	  !!Tiefe der zweiten lithologischen Grenze in gebohrten Metern (Measured Depth) Bemerkung: Constraint: DepthTo > DepthFrom
+	  DepthTo : MANDATORY 0.000 .. 9999.999 [INTERLIS.m];
+	  !! Beschreibung der erbohrten geologischen Einheit. Bemerkung: Bei Kernverlust (core loss) wird dies in diesem Feld vermerkt
+	  LayerDescr : MANDATORY TEXT*254;
+	  !! Beschreibung der Zuordnung der erbohrten geologischen Einheit zu einer chrono-, lithostratigraphischen Einheit und / oder einer tektonischen Domäne
+	  GeolDescr : TEXT*254;
+	  
+	!! ----------	  
+	MANDATORY CONSTRAINT
+      DepthTo > DepthFrom;	
+	!! ----------
+	
+	END GeolLayer;
+
+    !! Beschreibung der erbohrten tektonischen Strukturen, wie z.B. eine Störungszone.
+	CLASS TectoLayer =
+	  !! Tiefe der zuerst erreichten Grenze der erbohrten tektonischen Struktur in gebohrten Metern (Measured Depth)) Bemerkung: Wenn die erbohrte Struktur nur eine geringe Ausdehnung entlang des Bohrlochverlaufs aufweist, gilt DepthFrom = DepthTo
+	  DepthFrom : MANDATORY 0.000 .. 9999.999 [INTERLIS.m];
+	  !! Tiefe der als zweites erreichten Grenze der erbohrten tektonischen Struktur in gebohrten Metern (Measured Depth) Bemerkung: Wenn die erbohrte Struktur nur eine geringe Mächtigkeit entlang des Bohrlochverlaufs aufweist, gilt DepthTo = DepthFrom. Wenn nicht, gilt der Constraint: DepthTo > DepthFrom
+	  DepthTo : MANDATORY 0.000 .. 9999.999 [INTERLIS.m];
+	  !! Beschreibung der erbohrten tektonischen Struktur
+	  LayerDescr : TEXT*254;
+	  !! Typ der erbohrten tektonischen Struktur (Störung, Störungszone, Kluft geschlossen, Kluft offen, Kluft verfüllt, Faltung, andere)
+	  Type : TEXT*1111;
+	  !! Relativer Einfallswinkel der erbohrten tektonischen Struktur bezogen auf die Bohrachse, wenn auf dem Bohrprotokoll vermerkt. Gemessen von der Bohrachse (0°) bis in die Senkrechte auf diese (90°). Wertebereich: 0 - 90°
+	  RelDip : Dip;
+
+	MANDATORY CONSTRAINT
+      DepthTo >= DepthFrom;
+	  
+	END TectoLayer;
+
+    !! Beschreibung der lithologischen, chronostratigraphischen, tektonischen und lithostratigraphischen Interpretation der erbohrten geologischen Einheit
+    CLASS GeolInterpret =
+	  !! Bezeichnung des Standards nach dem die Interpretation durchgeführt wurde, z.B. Datenmodell Geologie. Bemerkung: Je nach Standard werden andere Codelisten in den nachfolgenden Attributen verwendet. Bei der Verwendung anderer Standards müssen die jeweiligen Codelisten zugänglich gemacht werden.
+	  Standard : TEXT*1111;
+	  !! Lithologische Zuordnung der geologischen Einheit
+	  Litho : TEXT*1111;
+	  !! Chronostratigraphische Zuordnung der geologischen Einheit
+	  Chrono : TEXT*1111;
+	  !! Zuordnung der geologischen Einheit zu einer tektonischen Einheit
+	  Tecto : TEXT*1111;
+	  !! Zuordnung der geologischen Einheit zu einer lithostratigraphischen Einheit
+	  Strati :TEXT*1111;
+	END GeolInterpret;
+
+
+!!****************************************
+!! ASSOCIATIONS
+!!****************************************
+    ASSOCIATION Stack_GeolLayer =
+      GeolLayeredStack (EXTERNAL) -- {1} DMBoreholes.ExtendedCore.Stack;
+      StackedGeolLayer -- {1..*} GeolLayer;
+    END Stack_GeolLayer;  
+
+    ASSOCIATION Stack_TectoLayer =
+      TectoLayeredStack (EXTERNAL) -- {1} DMBoreholes.ExtendedCore.Stack;
+      StackedTectoLayer -- {1..*} TectoLayer;
+    END Stack_TectoLayer; 
+
+    ASSOCIATION GeolLayer_GeolInterpret =
+	  InterpretedGeolLayer -- {1} GeolLayer;
+	  GeolLayeredInterpret --{0 .. 1} GeolInterpret;
+	END GeolLayer_GeolInterpret;
+
   END Geology;
 
 END DMBoreholes.
