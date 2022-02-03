@@ -1,0 +1,299 @@
+INTERLIS 2.3;
+
+!! BEMERKUNGEN
+!! Attribute, deren Datentypen auf TEXT*1111 gesetzt sind sollen mittels Enumeration oder Codelist befüllt werden
+!! 
+
+!!****************************************
+!! MODEL
+!!****************************************
+MODEL DMBoreholes (en) 
+AT "mailto:U80773132@localhost" 
+VERSION "2021-09-21" =
+
+!!****************************************
+!! IMPORTS
+!!****************************************
+  IMPORTS GeometryCHLV95_V1,Units;
+  IMPORTS CatalogueObjects_V1,CatalogueObjectTrees_V1,LocalisationCH_V1;
+  IMPORTS DMGeolAssets,DMAssetsCatalogues;
+
+
+!!****************************************
+!! UNITS & DOMAINES
+!!****************************************   
+
+  
+  DOMAIN
+    
+	Dip = 0.00 .. 90.00 [Units.Angle_Degree];
+	Azimuth = 0.00 .. 359.99 CIRCULAR [Units.Angle_Degree]; 
+	
+	!!Strukur für die Modellierung von Adressen
+    STRUCTURE Adress =
+      Street : TEXT*20;
+      Housenumber : TEXT*5;
+      PLZ : TEXT*5;
+      Locality : MANDATORY TEXT*20;
+      Country : MANDATORY TEXT*20;
+    END Adress;
+	
+	!! Struktur für die Definition einer ID, di ein einem BAG {0..*} verwendet werden kann
+    STRUCTURE WellID =
+      !! Alphanumerische ID
+	  ID : TEXT*50;
+	  !! Flag, der angibt, ob es sich um die aktuell gültige "Haupt"-ID handelt
+	  isMainID : BOOLEAN;
+    END WellID;
+
+    !! Struktur zur Definition eines Textes, der in einem BAG {0..*} genutzt werden kann
+    STRUCTURE TextDescr =
+      !! Titel der Bohrung
+	  TextDescrAtt : TEXT*254;
+	  !! Flag, der angibt, ob es sich um den aktuell gültigen "Haupt"-Titel handelt
+	  isMainID : BOOLEAN;
+    END TextDescr; 
+	
+	!! Struktur zur Definiton der Referenzhöhe und ihres Typs
+	STRUCTURE ElevationRef =
+	  TypeElevationRef : MANDATORY (
+	    !! Kelly bushing
+		KB,
+		!! DF
+		DF,
+		!! Rotary table
+		RT,
+		!! GL
+		GL,
+		!!UET = Upper edge tube = OKR = Oberkante Rohr
+		UET,
+		!! unbekannt (nur für alte Daten)
+		unknown
+	  );
+	  ElevationRef : -1000.000 .. 5000.000  [INTERLIS.m];
+	END ElevationRef;
+	
+	!! Struktur zur Definition der möglichen Stati einer Bohrung in einem BAG {0..*} 
+	STRUCTURE Status =
+	  Status : TEXT*1111;
+	END Status;
+  
+!!****************************************
+!! TOPIC 
+!!****************************************
+  TOPIC InnerCore =
+    OID AS INTERLIS.UUIDOID;
+  DEPENDS ON DMGeolAssets.CoreGeolAsset,DMAssetsCatalogues.Catalogues;
+
+
+    !! Klasse für die Beschreibung des Bohrstandorts
+    CLASS BoreholeLocation =
+      !! Lage des Bohransatzpunktes
+      Geometry : GeometryCHLV95_V1.Coord2;
+      !! Räumliches Referenzsystem (Angabe als EPSG)
+      SRS : MANDATORY TEXT*1111;
+      !! Höhe des Terrains (Ground level) am Ansatzhöhe der Bohrung (im Meter über Meer)
+      ElevationGL : MANDATORY -1000.000 .. 5000.000  [INTERLIS.m];
+      !! Höhenreferenzsystem
+      HRS : MANDATORY TEXT*1111;
+    END BoreholeLocation;
+
+
+    !! Klasse für die Beschreibung der wesentlichen Metadaten einer Bohrung = Stammdaten = Well Header
+    CLASS Borehole =
+      !! Identifikator(en) (ID) des Asset. Wenn möglich soll die Original-ID verwendet werden.
+      ID : BAG {1 .. *} OF WellID;
+	  !! Titel bzw. Name der Bohrung
+	  TitlePublic : BAG {1..*} OF TextDescr;
+	  !! Generalisierter Bohrtyp
+      Kind : MANDATORY TEXT*1111;
+	  !! Referenzhöhe der Längenmessung der Bohrung in Meter (Diese Angabe muss der Referenzhöhe dee Hauptprofils aus der Klasse ExtendedCore.BoreholeExtended.ElevationRef entsprechen)
+	  ElevationRef : MANDATORY ElevationRef;
+      !! Gemessene Länge (Measured Depth, MD) der Bohrung (im Meter)
+	  TDMeasuredDepth : MANDATORY 0.000 .. 9999.999 [INTERLIS.m];
+      !! True vertical depth (TVD) der Bohrung (im Meter)
+	  TDTrueVerticalDepth : MANDATORY 0.000 .. 9999.999 [INTERLIS.m];
+      !! TVDSS der der Bohrung (im Meter). Wikipedia:The acronym TVDSS is commonly used in the oil industry to represent TVD minus the elevation above mean sea level of the depth reference point of the well. The depth reference point is the kelly bushing in the United States and a few other nations, but is the drill floor in most places.
+	  TDTrueVerticalDepthSS : MANDATORY 0.000 .. 9999.999 [INTERLIS.m];	  
+      !! Einfallen der Bohrung am Bohransatz
+	  Orientation : MANDATORY TEXT*1111;
+	  !! Datum des Starts der Bohrarbeiten
+      DateSpud : MANDATORY FORMAT INTERLIS.XMLDate "1582-1-1" .. "2222-12-31";
+      !! Datum der Fertigstellung der Bohrung
+	  DateEnd : MANDATORY FORMAT INTERLIS.XMLDate "1582-1-1" .. "2222-12-31";
+	  !! Zugänglichkeit: frei / gesperrt
+      Restriction : MANDATORY BOOLEAN;
+	  !! Ablaufdatum der Zugnagsbeschränkung, muss gesetzt werden, wenn Restriction = gesperrt
+      DateRestricted : MANDATORY FORMAT INTERLIS.XMLDate "1582-1-1" .. "2222-12-31";
+	  !! Bewilligungsnummer
+	  NoPermit : TEXT*254;
+	  
+	!! ----------
+    MANDATORY CONSTRAINT
+      Restriction <> #true OR DEFINED (DateRestricted);
+	!! ----------
+	  
+    END Borehole;
+    
+
+!!****************************************
+!! ASSOCIATIONS
+!!****************************************
+    !! Beziehung Borehole zu BoreholeLocation die den Bohransatzpunkt definiert
+    ASSOCIATION Borehole_BoreholeLocation_SurfaceLocation =
+      StartedBorehole -- {1} Borehole;
+      SurfaceLocation -- {1} BoreholeLocation;
+    END Borehole_BoreholeLocation_SurfaceLocation;
+	
+    !! Beziehung Borehole zu BoreholeLocation die den Bohrendpunkt definiert
+    ASSOCIATION Borehole_BoreholeLocation_TDLocation =
+      EndedBorehole -- {1} Borehole;
+      TDLocation -- {0..1} BoreholeLocation;
+    END Borehole_BoreholeLocation_TDLocation;
+
+    !! Operator
+    ASSOCIATION Borehole_Contact_Operator =
+      OperatedBorehole -- {1..*} Borehole;
+      Operator (EXTERNAL) -- {0..*} DMGeolAssets.CoreGeolAsset.Contact;
+    END Borehole_Contact_Operator;
+
+    !! Contractor
+    ASSOCIATION Borehole_Contact_Contractor =
+      ContractedBorehole -- {1..*} Borehole;
+      Contractor (EXTERNAL) -- {0..*} DMGeolAssets.CoreGeolAsset.Contact;
+    END Borehole_Contact_Contractor; 
+   
+  END InnerCore;
+  
+  
+  TOPIC ExtendedCore =
+     OID AS INTERLIS.UUIDOID;
+  DEPENDS ON DMBoreholes.InnerCore,DMAssetsCatalogues.Catalogues;
+
+    !! Typ der Erfassung
+    STRUCTURE StackCreationType =
+	  !! Typ der Erfassung des Profils (Originalaufnahmen, Neuinpertretation)  
+	  Type : TEXT*1111;
+	  !! Benennung des Projekts in dem das Profil erfasst wurde.
+	  Project : TEXT*254;
+	END StackCreationType;
+ 
+    CLASS BoreholeExtended
+    EXTENDS DMBoreholes.InnerCore.Borehole =
+      TitleOriginal : TextDescr;
+      Method : TEXT*1111;
+      Purpose : TEXT*1111;
+	  !! Ziel der Bohrung. Auf welches Target wird gebohrt? Evtl. Enummaration definieren
+	  Target : TEXT*254;
+      Status : BAG {1..*} OF Status;
+      DepthBedrock : 0.000 .. 9999.999 [INTERLIS.m];
+      DepthGW : BOOLEAN;
+    END BoreholeExtended;
+	
+	
+	CLASS Stack =
+	  !! Art des Profils, z.B. Lithologisch/stratigrafisches Profil, geotechnisches Profil, Strukturprofil, Hydrogeologiesches Profil (konkrete Werte sind zu definieren)
+	  Kind : MANDATORY TEXT*1111;
+	  !! Früher Attribut "Type": Type des Profils (Originalaufnahme, Neuinterpretation) --> FRAGE: ist dieses Attribut noch erforderlich?
+	  StackCreationType : MANDATORY StackCreationType;
+	  !! Angabe, ob es sich bei diesem Profil um das Hauptprifl handelt
+	  isMain : MANDATORY BOOLEAN;
+	  !! Referenzhöhe der Längenmessung des vorliegenden Profils in Meter
+	  ElevationRef : MANDATORY ElevationRef;
+      !! Bemerkung zum vorliegenden Profil	  
+	  Remark : TEXT*254;
+	  	  
+	END Stack;
+
+
+!!****************************************
+!! ASSOCIATIONS
+!!****************************************
+    ASSOCIATION Borehole_Stack =
+      StackedBorehole (EXTERNAL) -- {1} DMBoreholes.InnerCore.Borehole;
+      BoreholeStack -- {0..*} Stack;
+    END Borehole_Stack;
+
+
+  END ExtendedCore;
+
+!!****************************************
+!! TOPIC 
+!!****************************************
+
+  TOPIC Geology =
+     OID AS INTERLIS.UUIDOID;
+  DEPENDS ON DMBoreholes.ExtendedCore,DMAssetsCatalogues.Catalogues;
+  
+    !! Beschreibung der erbohrte geologische Einheit, so wie diese im Bohrprofil wiedergegeben ist
+    CLASS GeolLayer =
+	  !! Tiefe der ersten lithologischen Grenze in gebohrten Metern (Measured Depth)
+	  DepthFrom : MANDATORY 0.000 .. 9999.999 [INTERLIS.m];
+	  !!Tiefe der zweiten lithologischen Grenze in gebohrten Metern (Measured Depth) Bemerkung: Constraint: DepthTo > DepthFrom
+	  DepthTo : MANDATORY 0.000 .. 9999.999 [INTERLIS.m];
+	  !! Beschreibung der erbohrten geologischen Einheit. Bemerkung: Bei Kernverlust (core loss) wird dies in diesem Feld vermerkt
+	  LayerDescr : MANDATORY TEXT*254;
+	  !! Beschreibung der Zuordnung der erbohrten geologischen Einheit zu einer chrono-, lithostratigraphischen Einheit und / oder einer tektonischen Domäne
+	  GeolDescr : TEXT*254;
+	  
+	!! ----------	  
+	MANDATORY CONSTRAINT
+      DepthTo > DepthFrom;	
+	!! ----------
+	
+	END GeolLayer;
+
+    !! Beschreibung der erbohrten tektonischen Strukturen, wie z.B. eine Störungszone.
+	CLASS TectoLayer =
+	  !! Tiefe der zuerst erreichten Grenze der erbohrten tektonischen Struktur in gebohrten Metern (Measured Depth)) Bemerkung: Wenn die erbohrte Struktur nur eine geringe Ausdehnung entlang des Bohrlochverlaufs aufweist, gilt DepthFrom = DepthTo
+	  DepthFrom : MANDATORY 0.000 .. 9999.999 [INTERLIS.m];
+	  !! Tiefe der als zweites erreichten Grenze der erbohrten tektonischen Struktur in gebohrten Metern (Measured Depth) Bemerkung: Wenn die erbohrte Struktur nur eine geringe Mächtigkeit entlang des Bohrlochverlaufs aufweist, gilt DepthTo = DepthFrom. Wenn nicht, gilt der Constraint: DepthTo > DepthFrom
+	  DepthTo : MANDATORY 0.000 .. 9999.999 [INTERLIS.m];
+	  !! Beschreibung der erbohrten tektonischen Struktur
+	  LayerDescr : TEXT*254;
+	  !! Typ der erbohrten tektonischen Struktur (Störung, Störungszone, Kluft geschlossen, Kluft offen, Kluft verfüllt, Faltung, andere)
+	  Type : TEXT*1111;
+	  !! Relativer Einfallswinkel der erbohrten tektonischen Struktur bezogen auf die Bohrachse, wenn auf dem Bohrprotokoll vermerkt. Gemessen von der Bohrachse (0°) bis in die Senkrechte auf diese (90°). Wertebereich: 0 - 90°
+	  RelDip : Dip;
+
+	MANDATORY CONSTRAINT
+      DepthTo >= DepthFrom;
+	  
+	END TectoLayer;
+
+    !! Beschreibung der lithologischen, chronostratigraphischen, tektonischen und lithostratigraphischen Interpretation der erbohrten geologischen Einheit
+    CLASS GeolInterpret =
+	  !! Bezeichnung des Standards nach dem die Interpretation durchgeführt wurde, z.B. Datenmodell Geologie. Bemerkung: Je nach Standard werden andere Codelisten in den nachfolgenden Attributen verwendet. Bei der Verwendung anderer Standards müssen die jeweiligen Codelisten zugänglich gemacht werden.
+	  Standard : TEXT*1111;
+	  !! Lithologische Zuordnung der geologischen Einheit
+	  Litho : TEXT*1111;
+	  !! Chronostratigraphische Zuordnung der geologischen Einheit
+	  Chrono : TEXT*1111;
+	  !! Zuordnung der geologischen Einheit zu einer tektonischen Einheit
+	  Tecto : TEXT*1111;
+	  !! Zuordnung der geologischen Einheit zu einer lithostratigraphischen Einheit
+	  Strati :TEXT*1111;
+	END GeolInterpret;
+
+
+!!****************************************
+!! ASSOCIATIONS
+!!****************************************
+    ASSOCIATION Stack_GeolLayer =
+      GeolLayeredStack (EXTERNAL) -- {1} DMBoreholes.ExtendedCore.Stack;
+      StackedGeolLayer -- {1..*} GeolLayer;
+    END Stack_GeolLayer;  
+
+    ASSOCIATION Stack_TectoLayer =
+      TectoLayeredStack (EXTERNAL) -- {1} DMBoreholes.ExtendedCore.Stack;
+      StackedTectoLayer -- {1..*} TectoLayer;
+    END Stack_TectoLayer; 
+
+    ASSOCIATION GeolLayer_GeolInterpret =
+	  InterpretedGeolLayer -- {1} GeolLayer;
+	  GeolLayeredInterpret --{0 .. 1} GeolInterpret;
+	END GeolLayer_GeolInterpret;
+
+  END Geology;
+
+END DMBoreholes.
