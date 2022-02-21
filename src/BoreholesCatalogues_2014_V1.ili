@@ -16,8 +16,9 @@ MODEL BoreholeModelLookUp_V1_0 (en) AT "http://models.geo.admin.ch/swisstopo/" V
     EXTENDS CatalogueObjects_V1.Catalogues.Item =
       BoreCode : MANDATORY TEXT*10;
       Kind : MANDATORY LocalisationCH_V1.MultilingualText;
-    UNIQUE GeolCode;
-    END Borehole_Kind;    
+    UNIQUE BoreCode;
+    END Borehole_Kind;
+	
     STRUCTURE Ref_Ibor102
     EXTENDS CatalogueObjects_V1.Catalogues.CatalogueReference =
       Reference(EXTENDED): REFERENCE TO (EXTERNAL) Borehole_Kind;
@@ -27,8 +28,9 @@ MODEL BoreholeModelLookUp_V1_0 (en) AT "http://models.geo.admin.ch/swisstopo/" V
     EXTENDS CatalogueObjects_V1.Catalogues.Item =
       BoreCode : MANDATORY TEXT*10;
       SRS : MANDATORY LocalisationCH_V1.MultilingualText;
-    UNIQUE GeolCode;
-    END Borehole_SRS;    
+    UNIQUE BoreCode;
+    END Borehole_SRS;
+	
     STRUCTURE Ref_Ibor105
     EXTENDS CatalogueObjects_V1.Catalogues.CatalogueReference =
       Reference(EXTENDED): REFERENCE TO (EXTERNAL) Borehole_SRS;
@@ -38,8 +40,9 @@ MODEL BoreholeModelLookUp_V1_0 (en) AT "http://models.geo.admin.ch/swisstopo/" V
     EXTENDS CatalogueObjects_V1.Catalogues.Item =
       BoreCode : MANDATORY TEXT*10;
       HRS : MANDATORY LocalisationCH_V1.MultilingualText;
-    UNIQUE GeolCode;
-    END Borehole_HRS;    
+    UNIQUE BoreCode;
+    END Borehole_HRS;
+	
     STRUCTURE Ref_Ibor107
     EXTENDS CatalogueObjects_V1.Catalogues.CatalogueReference =
       Reference(EXTENDED): REFERENCE TO (EXTERNAL) Borehole_HRS;
@@ -49,8 +52,9 @@ MODEL BoreholeModelLookUp_V1_0 (en) AT "http://models.geo.admin.ch/swisstopo/" V
     EXTENDS CatalogueObjects_V1.Catalogues.Item =
       BoreCode : MANDATORY TEXT*10;
       Orientation : MANDATORY LocalisationCH_V1.MultilingualText;
-    UNIQUE GeolCode;
-    END Borehole_Orientation;    
+    UNIQUE BoreCode;
+    END Borehole_Orientation;
+	
     STRUCTURE Ref_Ibor109
     EXTENDS CatalogueObjects_V1.Catalogues.CatalogueReference =
       Reference(EXTENDED): REFERENCE TO (EXTERNAL) Borehole_Orientation;
@@ -65,8 +69,9 @@ MODEL BoreholeModelLookUp_V1_0 (en) AT "http://models.geo.admin.ch/swisstopo/" V
     EXTENDS CatalogueObjects_V1.Catalogues.Item =
       BoreCode : MANDATORY TEXT*10;
       Method : MANDATORY LocalisationCH_V1.MultilingualText;
-    UNIQUE GeolCode;
-    END Borehole_extended_Method;    
+    UNIQUE BoreCode;
+    END Borehole_extended_Method;
+	
     STRUCTURE Ref_Ebor102
     EXTENDS CatalogueObjects_V1.Catalogues.CatalogueReference =
       Reference(EXTENDED): REFERENCE TO (EXTERNAL) Borehole_extended_Method;
