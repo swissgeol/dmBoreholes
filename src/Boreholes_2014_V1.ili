@@ -1,0 +1,52 @@
+INTERLIS 2.3;
+/** DATA MODEL BOREHOLE DATA - DATENMODELL BOHRDATEN - MODÈLE DE DONNÉES DES FORAGES - MODELLO DI DATI DEI SONDAGGI
+* minimal geodata model, topic: BOREHOLE DATA, provider: swisstopo / SWISS GEOLOGICAL SURVEY
+*/
+!!@ Contact = info@swisstopo.ch
+!!@ IDGeoIV = "50.4"
+CONTRACTED MODEL DM_Borehole_Data_V1_0 (en) AT "http://models.geo.admin.ch/swisstopo/" VERSION "2013-13-13"  =
+  IMPORTS GeometryCHLV95_V1,Units;
+    
+  DOMAIN
+  
+  TOPIC Inner_Core =
+  	
+    CLASS Borehole =
+    	Contact_BoreID : MANDATORY TEXT*254;
+    	Kind : MANDATORY BoreholeModelLookUp_V1_0.Geology_Catalogues.Ref_Ibor102;
+    	Location_X : MANDATORY Coord2;
+    	Location_Y : MANDATORY Coord2;
+    	SRS : MANDATORY BoreholeModelLookUp_V1_0.Geology_Catalogues.Ref_Ibor105;
+    	Elevation_Z : MANDATORY 0.000 .. 9999.999 [m.ü.M];
+    	HRS : MANDATORY BoreholeModelLookUp_V1_0.Geology_Catalogues.Ref_Ibor107;
+    	Length : MANDATORY 0.000 .. 9999.999 [INTERLIS.m];
+    	Orientation : MANDATORY BoreholeModelLookUp_V1_0.Geology_Catalogues.Ref_Ibor109;
+    	Date : MANDATORY XMLDate;
+    	Restriction : MANDATORY BOOLEAN;
+    	Restricted_until : MANDATORY XMLDate;
+    END Borehole;
+    
+    CLASS Contact =
+    	Kind : MANDATORY BoreholeModelLookUp_V1_0.Geology_Catalogues.Ref_Icon101;
+    	Name : MANDATORY TEXT*254;
+    	Address : TEXT*254;
+    	Email : TEXT*254;
+    	Tel : TEXT*254;
+    	Website : TEXT*254;
+ 		END Contact
+    
+  END Inner_Core;
+  
+  TOPIC Extended_Core =
+  	
+  	CLASS Borehole_extended
+  	EXTENDS Inner_Core.Borehole =
+  		Original_Name : TEXT*254;
+  		Method : BoreholeModelLookUp_V1_0.Geology_Catalogues.Ref_Ebor102;
+  		Purpose : BoreholeModelLookUp_V1_0.Geology_Catalogues.Ref_Ebor103;
+  		Status : BoreholeModelLookUp_V1_0.Geology_Catalogues.Ref_Ebor104;
+  		Depth_Bedrock : 0.000 .. 9999.999 [INTERLIS.m];
+  		Depth_GW : BOOLEAN;
+  	END Borehole_extended;
+  
+END DM_Borehole_Data_V1_0.

@@ -1,0 +1,79 @@
+INTERLIS 2.3;
+/** DATA MODEL BOREHOLE DATA LookUp - DATENMODELL BOHRDATEN - MODÈLE DE DONNÉES DES FORAGES
+* BoreholeModelLookUp belongs to the minimal geodata model DM_Borehole_Data_V1_0, topic: BOREHOLE DATA, provider: swisstopo / SWISS GEOLOGICAL SURVEY
+*/
+!!@ Contact = info@swisstopo.ch
+!!@ IDGeoIV = "50.4"
+MODEL BoreholeModelLookUp_V1_0 (en) AT "http://models.geo.admin.ch/swisstopo/" VERSION "2013-13-13"  =
+/**Name of Reference Structure: Ref_+GeolCode of the Attribute*/
+  IMPORTS CatalogueObjects_V1,CatalogueObjectTrees_V1,LocalisationCH_V1;
+  
+  TOPIC Borehole_Data_Catalogues 
+  EXTENDS CatalogueObjects_V1.Catalogues =
+
+!!******************************************************************************
+    CLASS Borehole_Kind
+    EXTENDS CatalogueObjects_V1.Catalogues.Item =
+      BoreCode : MANDATORY TEXT*10;
+      Kind : MANDATORY LocalisationCH_V1.MultilingualText;
+    UNIQUE GeolCode;
+    END Borehole_Kind;    
+    STRUCTURE Ref_Ibor102
+    EXTENDS CatalogueObjects_V1.Catalogues.CatalogueReference =
+      Reference(EXTENDED): REFERENCE TO (EXTERNAL) Borehole_Kind;
+    END Ref_Ibor102;
+    
+    CLASS Borehole_SRS
+    EXTENDS CatalogueObjects_V1.Catalogues.Item =
+      BoreCode : MANDATORY TEXT*10;
+      SRS : MANDATORY LocalisationCH_V1.MultilingualText;
+    UNIQUE GeolCode;
+    END Borehole_SRS;    
+    STRUCTURE Ref_Ibor105
+    EXTENDS CatalogueObjects_V1.Catalogues.CatalogueReference =
+      Reference(EXTENDED): REFERENCE TO (EXTERNAL) Borehole_SRS;
+    END Ref_Ibor105;
+    
+    CLASS Borehole_HRS
+    EXTENDS CatalogueObjects_V1.Catalogues.Item =
+      BoreCode : MANDATORY TEXT*10;
+      HRS : MANDATORY LocalisationCH_V1.MultilingualText;
+    UNIQUE GeolCode;
+    END Borehole_HRS;    
+    STRUCTURE Ref_Ibor107
+    EXTENDS CatalogueObjects_V1.Catalogues.CatalogueReference =
+      Reference(EXTENDED): REFERENCE TO (EXTERNAL) Borehole_HRS;
+    END Ref_Ibor107;
+    
+    CLASS Borehole_Orientation
+    EXTENDS CatalogueObjects_V1.Catalogues.Item =
+      BoreCode : MANDATORY TEXT*10;
+      Orientation : MANDATORY LocalisationCH_V1.MultilingualText;
+    UNIQUE GeolCode;
+    END Borehole_Orientation;    
+    STRUCTURE Ref_Ibor109
+    EXTENDS CatalogueObjects_V1.Catalogues.CatalogueReference =
+      Reference(EXTENDED): REFERENCE TO (EXTERNAL) Borehole_Orientation;
+    END Ref_Ibor109;
+
+!!******************************************************************************    
+    
+    
+    
+!!******************************************************************************    
+    CLASS Borehole_extended_Method
+    EXTENDS CatalogueObjects_V1.Catalogues.Item =
+      BoreCode : MANDATORY TEXT*10;
+      Method : MANDATORY LocalisationCH_V1.MultilingualText;
+    UNIQUE GeolCode;
+    END Borehole_extended_Method;    
+    STRUCTURE Ref_Ebor102
+    EXTENDS CatalogueObjects_V1.Catalogues.CatalogueReference =
+      Reference(EXTENDED): REFERENCE TO (EXTERNAL) Borehole_extended_Method;
+    END Ref_Ebor102;
+    
+!!******************************************************************************  
+    
+  END Borehole_Data_Catalogues;
+    
+END BoreholeModelLookUp_V1_0.
