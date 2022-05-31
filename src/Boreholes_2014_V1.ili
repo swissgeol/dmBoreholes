@@ -174,10 +174,10 @@ VERSION "2022-05-31" =
   	  Method : BoreholesCatalogues_V1.Catalogues.Ref_Ebor102;
 	  /** 
 	  Bohrzweck / Bohranlass (z.B. Rohstoffbohrung, Geotechnik, etc.). Es können mehrere Angaben abgebildet werden. */
-  	  Purpose : TEXT*254; !!BoreholesCatalogues_V1.Catalogues.Ref_Ebor103;
+  	  Purpose : BoreholesCatalogues_V1.Catalogues.Ref_Ebor103;
 	  /** 
 	  Status der Bohrung (ausgebaut, verfüllt, in Betrieb, stillgelegt, etc.). */
-  	  Status : TEXT*254; !!BoreholesCatalogues_V1.Catalogues.Ref_Ebor104;
+  	  Status : BoreholesCatalogues_V1.Catalogues.Ref_Ebor104;
 	  /** 
 	  Felsoberfläche in m (falls angetroffen), gemessen ab Bohransatzpunkt (Attribut-Wert Elevation_Z). */
   	  Top_Bedrock : 0.000 .. 9999.999 [INTERLIS.m];
