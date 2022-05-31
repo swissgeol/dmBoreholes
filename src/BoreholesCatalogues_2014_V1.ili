@@ -98,6 +98,24 @@ MODEL BoreholeModelLookUp_V1_0 (en) AT "http://models.geo.admin.ch/swisstopo/" V
       Reference(EXTENDED): REFERENCE TO (EXTERNAL) Bore_Inc_Dir;
     END Bore_Inc_DirRef;
 
+
+    /**
+    Codeliste für Attribut Inner_core.Contact.Kind */   
+    CLASS ContactKind
+    EXTENDS CatalogueObjects_V1.Catalogues.Item =
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
+    END ContactKind;
+	
+    STRUCTURE Ref_Icon101
+    EXTENDS CatalogueObjects_V1.Catalogues.CatalogueReference =
+      Reference(EXTENDED): REFERENCE TO (EXTERNAL) ContactKind;
+    END Ref_Icon101;
+
     /**
     Codeliste für Attribut Inner_core.BoreID.Code_Contact */   
     CLASS Bore_ID
