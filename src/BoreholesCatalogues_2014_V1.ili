@@ -4,7 +4,7 @@ INTERLIS 2.3;
 */
 !!@ Contact = info@swisstopo.ch
 !!@ IDGeoIV = "50.4"
-MODEL BoreholeModelLookUp_V1_0 (en) AT "http://models.geo.admin.ch/swisstopo/" VERSION "2013-13-13"  =
+MODEL BoreholeModelLookUp_V1_0 (en) AT "http://models.geo.admin.ch/swisstopo/" VERSION "2022-05-31"  =
 /**Name of Reference Structure: Ref_+GeolCode of the Attribute*/
   IMPORTS CatalogueObjects_V1,CatalogueObjectTrees_V1,LocalisationCH_V1;
   
