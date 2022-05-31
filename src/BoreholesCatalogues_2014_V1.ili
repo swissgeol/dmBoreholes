@@ -8,75 +8,169 @@ MODEL BoreholeModelLookUp_V1_0 (en) AT "http://models.geo.admin.ch/swisstopo/" V
 /**Name of Reference Structure: Ref_+GeolCode of the Attribute*/
   IMPORTS CatalogueObjects_V1,CatalogueObjectTrees_V1,LocalisationCH_V1;
   
-  TOPIC Borehole_Data_Catalogues 
-  EXTENDS CatalogueObjects_V1.Catalogues =
+  TOPIC Borehole_Data_Catalogues =
+  !!EXTENDS CatalogueObjects_V1.Catalogues =
+  OID AS INTERLIS.UUIDOID;
 
 !!******************************************************************************
+    /**
+    Codeliste für Attribut Inner_core.Borehole.Kind */ 
     CLASS Borehole_Kind
     EXTENDS CatalogueObjects_V1.Catalogues.Item =
-      BoreCode : MANDATORY TEXT*10;
-      Kind : MANDATORY LocalisationCH_V1.MultilingualText;
-    UNIQUE BoreCode;
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
     END Borehole_Kind;
 	
     STRUCTURE Ref_Ibor102
     EXTENDS CatalogueObjects_V1.Catalogues.CatalogueReference =
       Reference(EXTENDED): REFERENCE TO (EXTERNAL) Borehole_Kind;
     END Ref_Ibor102;
-    
+
+    /**
+    Codeliste für Attribut Inner_core.Borehole.SRS */    
     CLASS Borehole_SRS
     EXTENDS CatalogueObjects_V1.Catalogues.Item =
-      BoreCode : MANDATORY TEXT*10;
-      SRS : MANDATORY LocalisationCH_V1.MultilingualText;
-    UNIQUE BoreCode;
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
     END Borehole_SRS;
 	
     STRUCTURE Ref_Ibor105
     EXTENDS CatalogueObjects_V1.Catalogues.CatalogueReference =
       Reference(EXTENDED): REFERENCE TO (EXTERNAL) Borehole_SRS;
     END Ref_Ibor105;
-    
+
+    /**
+    Codeliste für Attribut Inner_core.Borehole.HRS */    
     CLASS Borehole_HRS
     EXTENDS CatalogueObjects_V1.Catalogues.Item =
-      BoreCode : MANDATORY TEXT*10;
-      HRS : MANDATORY LocalisationCH_V1.MultilingualText;
-    UNIQUE BoreCode;
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
     END Borehole_HRS;
 	
     STRUCTURE Ref_Ibor107
     EXTENDS CatalogueObjects_V1.Catalogues.CatalogueReference =
       Reference(EXTENDED): REFERENCE TO (EXTERNAL) Borehole_HRS;
     END Ref_Ibor107;
-    
-    CLASS Borehole_Orientation
+
+    /**
+    Codeliste für Attribut Inner_core.Borehole.Bore_Inc */   
+    CLASS Bore_Inc
     EXTENDS CatalogueObjects_V1.Catalogues.Item =
-      BoreCode : MANDATORY TEXT*10;
-      Orientation : MANDATORY LocalisationCH_V1.MultilingualText;
-    UNIQUE BoreCode;
-    END Borehole_Orientation;
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
+    END Bore_Inc;
 	
     STRUCTURE Ref_Ibor109
     EXTENDS CatalogueObjects_V1.Catalogues.CatalogueReference =
-      Reference(EXTENDED): REFERENCE TO (EXTERNAL) Borehole_Orientation;
+      Reference(EXTENDED): REFERENCE TO (EXTERNAL) Bore_Inc;
     END Ref_Ibor109;
+
+    /**
+    Codeliste für Attribut Inner_core.Borehole.Bore_Inc_Dir */   
+    CLASS Bore_Inc_Dir
+    EXTENDS CatalogueObjects_V1.Catalogues.Item =
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
+    END Bore_Inc_Dir;
+	
+    STRUCTURE Bore_Inc_DirRef
+    EXTENDS CatalogueObjects_V1.Catalogues.CatalogueReference =
+      Reference(EXTENDED): REFERENCE TO (EXTERNAL) Bore_Inc_Dir;
+    END Bore_Inc_DirRef;
+
+    /**
+    Codeliste für Attribut Inner_core.BoreID.Code_Contact */   
+    CLASS Bore_ID
+    EXTENDS CatalogueObjects_V1.Catalogues.Item =
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
+    END Bore_ID;
+	
+    STRUCTURE Bore_IDRef
+    EXTENDS CatalogueObjects_V1.Catalogues.CatalogueReference =
+      Reference(EXTENDED): REFERENCE TO (EXTERNAL) Bore_ID;
+    END Bore_IDRef;
 
 !!******************************************************************************    
     
     
     
 !!******************************************************************************    
+    /**
+    Codeliste für Attribut Extended_Core.Borehole_extended.Method */
     CLASS Borehole_extended_Method
     EXTENDS CatalogueObjects_V1.Catalogues.Item =
-      BoreCode : MANDATORY TEXT*10;
-      Method : MANDATORY LocalisationCH_V1.MultilingualText;
-    UNIQUE BoreCode;
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
     END Borehole_extended_Method;
 	
     STRUCTURE Ref_Ebor102
     EXTENDS CatalogueObjects_V1.Catalogues.CatalogueReference =
       Reference(EXTENDED): REFERENCE TO (EXTERNAL) Borehole_extended_Method;
     END Ref_Ebor102;
-    
+
+    /**
+    Codeliste für Attribut Extended_Core.Borehole_extended.Purpose */
+    CLASS Borehole_extended_Purpose
+    EXTENDS CatalogueObjects_V1.Catalogues.Item =
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
+    END Borehole_extended_Purpose;
+	
+    STRUCTURE Ref_Ebor103
+    EXTENDS CatalogueObjects_V1.Catalogues.CatalogueReference =
+      Reference(EXTENDED): REFERENCE TO (EXTERNAL) Borehole_extended_Purpose;
+    END Ref_Ebor103;
+	
+    /**
+    Codeliste für Attribut Extended_Core.Borehole_extended.Status */
+    CLASS Borehole_extended_Status
+    EXTENDS CatalogueObjects_V1.Catalogues.Item =
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
+    END Borehole_extended_Status;
+	
+    STRUCTURE Ref_Ebor104
+    EXTENDS CatalogueObjects_V1.Catalogues.CatalogueReference =
+      Reference(EXTENDED): REFERENCE TO (EXTERNAL) Borehole_extended_Purpose;
+    END Ref_Ebor104;
+	
 !!******************************************************************************  
     
   END Borehole_Data_Catalogues;
