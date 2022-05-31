@@ -73,11 +73,9 @@ VERSION "2022-05-31" =
 	  /** 
 	  Einfallen der Bohrung am Bohransatz. Gemessene oder geschätzte Werte.*/
       Bore_Inc : MANDATORY BoreholeModelLookUp_V1_0.Borehole_Data_Catalogues.Ref_Ibor109;
-!!==>
 	  /**  
 	  Einfallsrichtung der Bohrung am Bohransatz. Ge-messene oder geschätzte Werte.*/
       Bore_Inc_Dir : MANDATORY BoreholeModelLookUp_V1_0.Borehole_Data_Catalogues.Bore_Inc_DirRef;	  
-!!==> 
 	  /** 
 	  Datum der Fertigstellung der Bohrung. Ist nur das Jahr bekannt, so gilt yyyy0101, ist kein Datum be-kannt, so gilt 11110101.*/
       Date : MANDATORY FORMAT INTERLIS.XMLDate "1582-1-1" .. "2222-12-31";
@@ -107,11 +105,9 @@ VERSION "2022-05-31" =
 	/** 
 	Die Klasse Contact umfasst alle Attribute, die einen Kontakt beschreiben, der bei einer be-schränkten Nutzung der Bohrangaben als Anfragestelle für eine Freigabe oder einer teilwei-sen Freigabe dient.*/
     CLASS Contact =
-!!==>
 	  /** 
 	  Information zur Art des Kontaktes (z.B. kantonale Bewilligungsbehörde, Bundesbehörde, Privatwirtschaft: begleitendes Fachbüro, etc.). Mindestkon-takt ist nach Möglichkeit immer die Bewilligungsbe-hörde.*/
       Kind : MANDATORY BoreholeModelLookUp_V1_0.Borehole_Data_Catalogues.Ref_Icon101;
-!!==>
       /**
       Name der Kontaktstelle (z.B. Amt für…). Pflichtfeld.*/
 	  Name : MANDATORY TEXT;
