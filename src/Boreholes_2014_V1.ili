@@ -11,7 +11,7 @@ INTERLIS 2.3;
 VERSION 2014
 https://www.geologieportal.ch/content/geologieportal-internet/de/knowledge/lookup/datamodels/datamodeldrill/_jcr_content/contentPar/tabs/items/dokumentationen/tabPar/downloadlist/downloadItems/141_1481730073425.download/DM_Bohrdaten_V2_DE_2014.pdf
 */
-MODEL DM_Borehole_Data_V1_0 (en) 
+MODEL Boreholes_V1 (en) 
 AT "http://models.geo.admin.ch/swisstopo/" 
 VERSION "2022-05-31" =
 
@@ -165,7 +165,7 @@ VERSION "2022-05-31" =
 	/** 
 	Die Klasse Borehole_Extended gehört zum Erweiterten Kern () und gibt erweiterte Informatio-nen zu der im Inneren Kern beschriebenen Bohrung.*/
   	CLASS Borehole_extended
-  	EXTENDS DM_Borehole_Data_V1_0.Inner_Core.Borehole =
+  	EXTENDS Boreholes_V1.Inner_Core.Borehole =
 	  /** 
 	  Originalname der Bohrung wie in Bericht, Bohrpro-fil, Dokumentation etc. angegeben. */
   	  Original_Name : TEXT*254;
@@ -189,4 +189,4 @@ VERSION "2022-05-31" =
 
   END Extended_Core;
 
-END DM_Borehole_Data_V1_0.
+END Boreholes_V1.
