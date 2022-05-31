@@ -1,0 +1,173 @@
+INTERLIS 2.3;
+/**
+*/
+MODEL BoreholesGeology_V1 (en)
+AT "https://www.swisstopo.ch"
+VERSION "2022-05-31" =
+
+  IMPORTS Boreholes_V1,BoreholesGeologyCatalogues_V1;
+
+  DOMAIN
+  !! RefHeight definieren
+  /**
+  Höhenangabe in Meter */
+  Height = 0.000 .. 9999.999;
+  /**
+  Tiefenangaben*/
+  Depth = 0.000 .. 20000.000;
+  
+  /**
+  */
+  TOPIC BoreholesGeology =
+    OID AS INTERLIS.UUIDOID;
+	DEPENDS ON BoreholesGeologyCatalogues_V1.Catalogues, Boreholes_V1.Inner_Core;
+	
+    /**
+    Die Klasse Stack bildet die Abfolge der in einer Bohrung angetroffenen geologischen Elemente ab.*/
+    CLASS Stack =
+	  /**
+	  Angabe dazu, welche Elemente im vorliegenden Bohrprofil dargestellt sind: Geol. Einheiten oder tektonische Strukturen*/
+	  Kind : MANDATORY BoreholesGeologyCatalogues_V1.Catalogues.BoreholeKindRef;
+	  /**
+	  Typ des Bohrprofils, z.B. Originalaufnahme */
+	  Type : MANDATORY BoreholesGeologyCatalogues_V1.Catalogues.BoreholeTypeRef;
+	  /**
+	  Kote Bezugspunkt in m ü.M.*/
+	  ElvRefHeight : MANDATORY Height;
+	  /**
+	  Bezugspunkt von der aus die im Bohrprofil angegebenen Tiefen gemessen wurden */
+	  RefHeight : MANDATORY BoreholesGeologyCatalogues_V1.Catalogues.BoreholeRefHeightRef;
+	  /**
+	  Beschreibung der erbohrten geologischen Einheit Bemerkung: Bei Kernverlust (core loss) wird dies in diesem Feld vermerkt*/
+	  LayerDescr : MANDATORY TEXT;
+	  /**
+	  Beschreibung der Zuordnung der erbohrten geologischen Einheit zu einer chrono-, lithostratigraphischen Einheit und / oder einer tektonischen Domäne*/
+	  GeolDescr : TEXT;
+	  
+	END Stack;
+    
+	/**
+	Die Klasse Layer beschreibt eine erbohrte geologische Einheit, so wie diese im Bohrprofil wiedergegeben ist.*/
+	CLASS Layer =
+	  /**
+	  Tiefe der ersten lithologischen Grenze in gebohrten Metern (Measured Depth)*/
+	  DepthFrom : MANDATORY Depth;
+	  /**
+	  Tiefe der zweiten lithologischen Grenze in gebohrten Metern (Measured Depth) Bemerkung: Constraint: DepthTo > DepthFrom*/
+	  DepthTo : MANDATORY Depth;	  
+	  /**
+	  DepthTo muss immer grösser als DepthFrom sein */
+	  MANDATORY CONSTRAINT DepthTo > DepthFrom;
+	
+	END Layer;
+
+    /**
+	Die Klasse GeolInterpret beschreibt die lithologische, chronostratigraphische, tektonische und lithostratigraphische Interpretation der erbohrten geologischen Einheiten.*/
+    CLASS GeolInterpred =
+	  /**
+	  Bezeichnung des Standards nach dem die Interpretation durchgeführt wurde, z.B. Datenmodell Geologie Bemerkung: Je nach Standard werden andere Codelisten in den nachfolgenden Attributen verwendet. Bei der Verwendung anderer Standards müssen die jeweiligen Codelisten zugänglich gemacht werden.*/
+	  Standard : MANDATORY BoreholesGeologyCatalogues_V1.Catalogues.LayerStandardRef;
+	  /**
+==>	  Lithologische Zuordnung der geologischen Einheit Bemerkung: Codeliste aus dem Datenmodell Geologie Anhang C2*/
+	  Ltiho : TEXT;
+	  /**
+==>	  Chronostratigraphische Zuordnung der geologischen Einheit Bemerkung: Codeliste aus dem Datenmodell Geologie Anhang C3*/
+	  Chrono : TEXT;
+	  /**
+==>	  Zuordnung der geologischen Einheit zu einer tektonischen Einheit Bemerkung: Codeliste aus dem Datenmodell Geologie Anhang C4*/
+	  TectU : TEXT;
+	  /**
+==>	  Zuordnung der geologischen Einheit zu einer lithostratigraphischen Einheit Bemerkung: Für Codelist aus dem Datenmodell Geologie, siehe Lithostratigraphisches Lexikon der Schweiz (www.strati.ch), da die zugehörigen Werte noch nicht in der aktuellen Dokumentation des Datenmodell Geologie vorliegen*/
+	  Strati : TEXT;
+	  
+	END GeolInterpred;
+	
+	/**
+	Die Klasse QuatClass beschreibt die quartären Lockergesteine gemäss gängiger Klassifikationsstandards, so wie sie im Feld, d.h. während der Aufnahme der Bohrung, angewendet werden können.*/
+    CLASS QuatClass =
+	  /**
+	  Klassifikation der Hauptkomponente oder des gesamten Materials gemäss leicht erweiterter SN 670 004-2b-Norm*/
+	  Comp1 : MANDATORY BoreholesGeologyCatalogues_V1.Catalogues.QuatCompRef;
+	  /**
+	  Korngrösse der Hauptkomponente Comp1*/
+	  GSComp1 : BoreholesGeologyCatalogues_V1.Catalogues.QuatGSCompRef;
+	  /**
+	  Klassifikation der Nebenkomponente gemäss leicht erweiterter SN 670 004-2b-Norm*/
+	  Comp2 : BoreholesGeologyCatalogues_V1.Catalogues.QuatCompRef;
+	  /**
+	  Korngrösse der Nebenkomponente */
+	  GSComp2 : BoreholesGeologyCatalogues_V1.Catalogues.QuatGSCompRef;
+	  /**
+	  Klassifikation der Beimengung gemäss leicht erweiterter SN 670 004-2b-Norm*/
+	  Comp3 : BoreholesGeologyCatalogues_V1.Catalogues.QuatCompRef;
+	  /**
+	  Kornrundung der Grobkomponente in Comp1, Comp2 oder Comp3 gemäss erweiterter EN-14688- 1 Norm*/
+	  Round : BoreholesGeologyCatalogues_V1.Catalogues.QuatRoundRef;
+	  /**
+	  Plastizität des Lockergesteins gemäss SN 670 004-2b-Norm*/
+	  Plastic : BoreholesGeologyCatalogues_V1.Catalogues.QuatPlasticRef;
+	  /**
+	  Konsistenz des Lockergesteins gemäss SN 670 004-2b-Norm*/
+	  Consist : BoreholesGeologyCatalogues_V1.Catalogues.QuatConsistRef;
+	  /**
+	  Feuchte des Lockergesteins*/
+	  Humid : BoreholesGeologyCatalogues_V1.Catalogues.QuatHumidRef;
+	  /**
+	  Kohäsion des Lockergesteins*/
+	  Cohesion : BoreholesGeologyCatalogues_V1.Catalogues.QuatCohesionRef;
+	  /**
+	  Organische Materie im Lockergestein*/
+	  OrgMat : BoreholesGeologyCatalogues_V1.Catalogues.QuatOrgMatRef;
+	  /**
+	  Kornform gemäss erweiterter EN-14688-1*/
+	  Shape : BoreholesGeologyCatalogues_V1.Catalogues.QuatShapeRef;
+	  /**
+	  Farbe des Lockergesteins*/
+	  Color : BoreholesGeologyCatalogues_V1.Catalogues.QuatColorRef;
+	  /**
+	  Verwitterungszustand des Lockergesteins */
+	  Alteration : BoreholesGeologyCatalogues_V1.Catalogues.QuatAlterationRef;
+	  /**
+	  Lagerungsdichte des Lockergesteins gemäss SN 670 004-2b Norm*/
+	  Compactness : BoreholesGeologyCatalogues_V1.Catalogues.QuatCompactnessRef;
+	  /**
+	  Bodenzustand des Lockergesteins gemäss SN 670 004-2b Norm */
+	  SoilCondition : BoreholesGeologyCatalogues_V1.Catalogues.QuatSoilConditionRef;
+	  /**
+	  Typ der Bestimmung der Klassifikation des Lockergesteins, z.B. im Feld bestimmt*/
+	  DetermType : MANDATORY BoreholesGeologyCatalogues_V1.Catalogues.QuatDetermTypeRef;
+	  
+	END QuatClass;
+    
+	/**
+	*/
+	ASSOCIATION Borehole_Stack =
+	  Borehole (EXTERNAL) -<#> {1} Boreholes_V1.Inner_Core.Borehole;
+	  Stack -- {0..*} Stack;
+	END Borehole_Stack;
+	
+	/**
+	Ein Bohrprofil (Stack) kann 0 .. * Layer enthalten */
+    ASSOCIATION Stack_Layer =
+	  Stack -<#> {1} Stack;
+	  Layer -- {0..*} Layer;
+	END Stack_Layer;
+	
+	/**
+	Einem Layer ist eine Geologische Interpretation zugeordnet.*/
+	ASSOCIATION Layer_GeolInterpred =
+	  Layer -<#> {1} Layer;
+      GeolInterpred -- {0..1} GeolInterpred;	  
+	END Layer_GeolInterpred;
+
+    /**
+	*/
+	ASSOCIATION Layer_QuatClass =
+	  Layer -<#> {1} Layer;
+	  QuatClass -- {0..1} QuatClass;
+	  
+	END Layer_QuatClass;
+
+  END BoreholesGeology;
+  
+END BoreholesGeology_V1.
