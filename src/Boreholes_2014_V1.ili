@@ -42,7 +42,7 @@ VERSION "2022-05-31" =
 !!****************************************
   /**
   Der Innere Kern beinhaltet ausschliesslich frei nutzbare Angaben und unterliegt niemals einer Nutzungsbeschränkung. Alle Attribute sind zwingend anzugeben.*/
-  TOPIC Inner_Core =
+  TOPIC InnerCore =
   OID AS INTERLIS.UUIDOID;
   DEPENDS ON BoreholesCatalogues_V1.Catalogues;
 
@@ -151,7 +151,7 @@ VERSION "2022-05-31" =
       END BoreID_Contact;
 
 
-  END Inner_Core;
+  END InnerCore;
 
 !!****************************************
 !! TOPIC 
@@ -165,7 +165,7 @@ VERSION "2022-05-31" =
 	/** 
 	Die Klasse Borehole_Extended gehört zum Erweiterten Kern () und gibt erweiterte Informatio-nen zu der im Inneren Kern beschriebenen Bohrung.*/
   	CLASS Borehole_extended
-  	EXTENDS Boreholes_V1.Inner_Core.Borehole =
+  	EXTENDS Boreholes_V1.InnerCore.Borehole =
 	  /** 
 	  Originalname der Bohrung wie in Bericht, Bohrpro-fil, Dokumentation etc. angegeben. */
   	  Original_Name : TEXT*254;
