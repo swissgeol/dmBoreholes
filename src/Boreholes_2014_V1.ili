@@ -43,6 +43,7 @@ VERSION "2022-05-31" =
   /**
   Der Innere Kern beinhaltet ausschliesslich frei nutzbare Angaben und unterliegt niemals einer Nutzungsbeschränkung. Alle Attribute sind zwingend anzugeben.*/
   TOPIC Inner_Core =
+  OID AS INTERLIS.UUIDOID;
   DEPENDS ON BoreholeModelLookUp_V1_0.Borehole_Data_Catalogues;
 
 	/**
@@ -75,7 +76,7 @@ VERSION "2022-05-31" =
 !!==>
 	  /**  
 	  Einfallsrichtung der Bohrung am Bohransatz. Ge-messene oder geschätzte Werte.*/
-      Bore_Inc_Dir : MANDATORY BoreholeModelLookUp_V1_0.Borehole_Data_Catalogues.Ref_Ibor109;	  
+      Bore_Inc_Dir : MANDATORY BoreholeModelLookUp_V1_0.Borehole_Data_Catalogues.Bore_Inc_DirRef;	  
 !!==> 
 	  /** 
 	  Datum der Fertigstellung der Bohrung. Ist nur das Jahr bekannt, so gilt yyyy0101, ist kein Datum be-kannt, so gilt 11110101.*/
@@ -108,8 +109,8 @@ VERSION "2022-05-31" =
     CLASS Contact =
 !!==>
 	  /** 
-	  Information zur Art des Kontaktes (z.B. kantonale Bewilligungsbehörde, Bundesbehörde, Privatwirt-schaft: begleitendes Fachbüro, etc.). Mindestkon-takt ist nach Möglichkeit immer die Bewilligungsbe-hörde.*/
-      Kind : MANDATORY TEXT*1111; !!BoreholeModelLookUp_V1_0.Borehole_Data_Catalogues.Ref_Icon101;
+	  Information zur Art des Kontaktes (z.B. kantonale Bewilligungsbehörde, Bundesbehörde, Privatwirtschaft: begleitendes Fachbüro, etc.). Mindestkon-takt ist nach Möglichkeit immer die Bewilligungsbe-hörde.*/
+      Kind : MANDATORY BoreholeModelLookUp_V1_0.Borehole_Data_Catalogues.Ref_Icon101;
 !!==>
       /**
       Name der Kontaktstelle (z.B. Amt für…). Pflichtfeld.*/
@@ -162,6 +163,7 @@ VERSION "2022-05-31" =
   /**
   Der Erweiterte Kern besteht einzig aus der Klasse Borehole_Extended. In dieser Klasse werden weitere Stamm- bzw. Primärdaten der Bohrung beschrieben. Ihre Angabe ist nciht Pflicht*/
   TOPIC Extended_Core =
+  OID AS INTERLIS.UUIDOID;
   DEPENDS ON BoreholeModelLookUp_V1_0.Borehole_Data_Catalogues;
 
 	/** 
@@ -184,7 +186,7 @@ VERSION "2022-05-31" =
 	  Felsoberfläche in m (falls angetroffen), gemessen ab Bohransatzpunkt (Attribut-Wert Elevation_Z). */
   	  Top_Bedrock : 0.000 .. 9999.999 [INTERLIS.m];
 	  /** 
-	  Angabe ob in der Bohrung Grundwasser angetrof-fen wurde. */
+	  Angabe ob in der Bohrung Grundwasser angetroffen wurde. */
   	  Groundwater : BOOLEAN;
 
   	END Borehole_extended;
