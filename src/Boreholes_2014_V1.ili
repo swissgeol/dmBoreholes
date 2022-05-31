@@ -20,7 +20,7 @@ VERSION "2022-05-31" =
 !! DOMAINES
 !!****************************************
   IMPORTS GeometryCHLV95_V1,Units;
-  IMPORTS BoreholeModelLookUp_V1_0;
+  IMPORTS BoreholesCatalogues_V1;
     
 !!****************************************
 !! DOMAINES
@@ -44,14 +44,14 @@ VERSION "2022-05-31" =
   Der Innere Kern beinhaltet ausschliesslich frei nutzbare Angaben und unterliegt niemals einer Nutzungsbeschränkung. Alle Attribute sind zwingend anzugeben.*/
   TOPIC Inner_Core =
   OID AS INTERLIS.UUIDOID;
-  DEPENDS ON BoreholeModelLookUp_V1_0.Borehole_Data_Catalogues;
+  DEPENDS ON BoreholesCatalogues_V1.Catalogues;
 
 	/**
 	Die Klasse Borehole bildet alle Daten, die über den Standort, die Bohrtiefe (bzw. die Bohrlänge), den Bohrtyp, etc. einer Bohrung eine Aussage machen, ab. */
     CLASS Borehole =
 	  /**  
 	  Generalisierter Bohrtyp (z.B. Bohrung, Sondier-schlitz, Rammsondierung, etc.) */
-      Kind : MANDATORY BoreholeModelLookUp_V1_0.Borehole_Data_Catalogues.Ref_Ibor102;
+      Kind : MANDATORY BoreholesCatalogues_V1.Catalogues.Ref_Ibor102;
 	  /** 
 	  E-Koordinate (Rechtswert; E=Ost) des Bohrstan-dortes. Bohransatzpunkt.*/
       Location_X : MANDATORY GeometryCHLV95_V1.Coord2;
@@ -60,22 +60,22 @@ VERSION "2022-05-31" =
       Location_Y : MANDATORY GeometryCHLV95_V1.Coord2;
 	  /** 
 	  Information zum verwendeten Koordinatenrefe-renzsystem (LV03 oder LV95). */
-      SRS : MANDATORY BoreholeModelLookUp_V1_0.Borehole_Data_Catalogues.Ref_Ibor105;
+      SRS : MANDATORY BoreholesCatalogues_V1.Catalogues.Ref_Ibor105;
 	  /** 
 	  Ansatzhöhe des Bohrstandortes in Meter über Meer. Ist die Ansatzhöhe nicht bekannt oder nicht mehr nachvollziehbar, so gilt -9999.*/
       Elevation_Z : MANDATORY 0.000 .. 9999.999;
 	  /** 
 	  Information zum Höhenreferenzsystem (LN02 oder LN95). */
-      HRS : MANDATORY BoreholeModelLookUp_V1_0.Borehole_Data_Catalogues.Ref_Ibor107;
+      HRS : MANDATORY BoreholesCatalogues_V1.Catalogues.Ref_Ibor107;
 	  /** 
 	  Gemessene Länge (Measured Depth) der Bohrung in Meter. Beinhaltet auch Verlängerung durch Krümmungen und Ablenkungen.*/
       Length : MANDATORY 0.000 .. 9999.999 [INTERLIS.m];
 	  /** 
 	  Einfallen der Bohrung am Bohransatz. Gemessene oder geschätzte Werte.*/
-      Bore_Inc : MANDATORY BoreholeModelLookUp_V1_0.Borehole_Data_Catalogues.Ref_Ibor109;
+      Bore_Inc : MANDATORY BoreholesCatalogues_V1.Catalogues.Ref_Ibor109;
 	  /**  
 	  Einfallsrichtung der Bohrung am Bohransatz. Ge-messene oder geschätzte Werte.*/
-      Bore_Inc_Dir : MANDATORY BoreholeModelLookUp_V1_0.Borehole_Data_Catalogues.Bore_Inc_DirRef;	  
+      Bore_Inc_Dir : MANDATORY BoreholesCatalogues_V1.Catalogues.Bore_Inc_DirRef;	  
 	  /** 
 	  Datum der Fertigstellung der Bohrung. Ist nur das Jahr bekannt, so gilt yyyy0101, ist kein Datum be-kannt, so gilt 11110101.*/
       Date : MANDATORY FORMAT INTERLIS.XMLDate "1582-1-1" .. "2222-12-31";
@@ -107,7 +107,7 @@ VERSION "2022-05-31" =
     CLASS Contact =
 	  /** 
 	  Information zur Art des Kontaktes (z.B. kantonale Bewilligungsbehörde, Bundesbehörde, Privatwirtschaft: begleitendes Fachbüro, etc.). Mindestkon-takt ist nach Möglichkeit immer die Bewilligungsbe-hörde.*/
-      Kind : MANDATORY BoreholeModelLookUp_V1_0.Borehole_Data_Catalogues.Ref_Icon101;
+      Kind : MANDATORY BoreholesCatalogues_V1.Catalogues.Ref_Icon101;
       /**
       Name der Kontaktstelle (z.B. Amt für…). Pflichtfeld.*/
 	  Name : MANDATORY TEXT;
@@ -160,7 +160,7 @@ VERSION "2022-05-31" =
   Der Erweiterte Kern besteht einzig aus der Klasse Borehole_Extended. In dieser Klasse werden weitere Stamm- bzw. Primärdaten der Bohrung beschrieben. Ihre Angabe ist nciht Pflicht*/
   TOPIC Extended_Core =
   OID AS INTERLIS.UUIDOID;
-  DEPENDS ON BoreholeModelLookUp_V1_0.Borehole_Data_Catalogues;
+  DEPENDS ON BoreholesCatalogues_V1.Catalogues;
 
 	/** 
 	Die Klasse Borehole_Extended gehört zum Erweiterten Kern () und gibt erweiterte Informatio-nen zu der im Inneren Kern beschriebenen Bohrung.*/
@@ -171,13 +171,13 @@ VERSION "2022-05-31" =
   	  Original_Name : TEXT*254;
 	  /** 
 	  Bohrmethode (z.B. gekernt, destruktiv, etc.). */
-  	  Method : BoreholeModelLookUp_V1_0.Borehole_Data_Catalogues.Ref_Ebor102;
+  	  Method : BoreholesCatalogues_V1.Catalogues.Ref_Ebor102;
 	  /** 
 	  Bohrzweck / Bohranlass (z.B. Rohstoffbohrung, Geotechnik, etc.). Es können mehrere Angaben abgebildet werden. */
-  	  Purpose : TEXT*254; !!BoreholeModelLookUp_V1_0.Borehole_Data_Catalogues.Ref_Ebor103;
+  	  Purpose : TEXT*254; !!BoreholesCatalogues_V1.Catalogues.Ref_Ebor103;
 	  /** 
 	  Status der Bohrung (ausgebaut, verfüllt, in Betrieb, stillgelegt, etc.). */
-  	  Status : TEXT*254; !!BoreholeModelLookUp_V1_0.Borehole_Data_Catalogues.Ref_Ebor104;
+  	  Status : TEXT*254; !!BoreholesCatalogues_V1.Catalogues.Ref_Ebor104;
 	  /** 
 	  Felsoberfläche in m (falls angetroffen), gemessen ab Bohransatzpunkt (Attribut-Wert Elevation_Z). */
   	  Top_Bedrock : 0.000 .. 9999.999 [INTERLIS.m];
