@@ -11,16 +11,16 @@ INTERLIS 2.3;
 VERSION 2014
 https://www.geologieportal.ch/content/geologieportal-internet/de/knowledge/lookup/datamodels/datamodeldrill/_jcr_content/contentPar/tabs/items/dokumentationen/tabPar/downloadlist/downloadItems/141_1481730073425.download/DM_Bohrdaten_V2_DE_2014.pdf
 */
-MODEL DM_Borehole_Data_V1_0 (en) 
+MODEL Boreholes_V1 (en) 
 AT "http://models.geo.admin.ch/swisstopo/" 
-VERSION "2022-02-21" =
+VERSION "2022-05-31" =
 
 
 !!****************************************
 !! DOMAINES
 !!****************************************
   IMPORTS GeometryCHLV95_V1,Units;
-  IMPORTS BoreholeModelLookUp_V1_0;
+  IMPORTS BoreholesCatalogues_V1;
     
 !!****************************************
 !! DOMAINES
@@ -40,84 +40,88 @@ VERSION "2022-02-21" =
 !!****************************************
 !! TOPIC 
 !!****************************************
-/** Topic des Kernmodells 
-*/
-  TOPIC Inner_Core =
-  DEPENDS ON BoreholeModelLookUp_V1_0.Borehole_Data_Catalogues;
+  /**
+  Der Innere Kern beinhaltet ausschliesslich frei nutzbare Angaben und unterliegt niemals einer Nutzungsbeschränkung. Alle Attribute sind zwingend anzugeben.*/
+  TOPIC InnerCore =
+  OID AS INTERLIS.UUIDOID;
+  DEPENDS ON BoreholesCatalogues_V1.Catalogues;
 
-	/** 
-	*/
+	/**
+	Die Klasse Borehole bildet alle Daten, die über den Standort, die Bohrtiefe (bzw. die Bohrlänge), den Bohrtyp, etc. einer Bohrung eine Aussage machen, ab. */
     CLASS Borehole =
+	  /**  
+	  Generalisierter Bohrtyp (z.B. Bohrung, Sondier-schlitz, Rammsondierung, etc.) */
+      Kind : MANDATORY BoreholesCatalogues_V1.Catalogues.Ref_Ibor102;
 	  /** 
-	  */
-      Kind : MANDATORY BoreholeModelLookUp_V1_0.Borehole_Data_Catalogues.Ref_Ibor102;
-	  /** 
-	  */
+	  E-Koordinate (Rechtswert; E=Ost) des Bohrstan-dortes. Bohransatzpunkt.*/
       Location_X : MANDATORY GeometryCHLV95_V1.Coord2;
 	  /** 
-	  */
+	  N-Koordinate (Hochwert; N=Nord) des Bohrstan-dortes. Bohransatzpunkt. */
       Location_Y : MANDATORY GeometryCHLV95_V1.Coord2;
 	  /** 
-	  */
-      SRS : MANDATORY BoreholeModelLookUp_V1_0.Borehole_Data_Catalogues.Ref_Ibor105;
+	  Information zum verwendeten Koordinatenrefe-renzsystem (LV03 oder LV95). */
+      SRS : MANDATORY BoreholesCatalogues_V1.Catalogues.Ref_Ibor105;
 	  /** 
-	  */
+	  Ansatzhöhe des Bohrstandortes in Meter über Meer. Ist die Ansatzhöhe nicht bekannt oder nicht mehr nachvollziehbar, so gilt -9999.*/
       Elevation_Z : MANDATORY 0.000 .. 9999.999;
 	  /** 
-	  */
-      HRS : MANDATORY BoreholeModelLookUp_V1_0.Borehole_Data_Catalogues.Ref_Ibor107;
+	  Information zum Höhenreferenzsystem (LN02 oder LN95). */
+      HRS : MANDATORY BoreholesCatalogues_V1.Catalogues.Ref_Ibor107;
 	  /** 
-	  */
+	  Gemessene Länge (Measured Depth) der Bohrung in Meter. Beinhaltet auch Verlängerung durch Krümmungen und Ablenkungen.*/
       Length : MANDATORY 0.000 .. 9999.999 [INTERLIS.m];
 	  /** 
-	  */
-      Orientation : MANDATORY BoreholeModelLookUp_V1_0.Borehole_Data_Catalogues.Ref_Ibor109;
+	  Einfallen der Bohrung am Bohransatz. Gemessene oder geschätzte Werte.*/
+      Bore_Inc : MANDATORY BoreholesCatalogues_V1.Catalogues.Ref_Ibor109;
+	  /**  
+	  Einfallsrichtung der Bohrung am Bohransatz. Ge-messene oder geschätzte Werte.*/
+      Bore_Inc_Dir : MANDATORY BoreholesCatalogues_V1.Catalogues.Bore_Inc_DirRef;	  
 	  /** 
-	  */
+	  Datum der Fertigstellung der Bohrung. Ist nur das Jahr bekannt, so gilt yyyy0101, ist kein Datum be-kannt, so gilt 11110101.*/
       Date : MANDATORY FORMAT INTERLIS.XMLDate "1582-1-1" .. "2222-12-31";
 	  /** 
-	  */
+	  Gibt den Status der Bohrung bezüglich der Nut-zungsbeschränkung von weiteren Details an. */
       Restriction : MANDATORY BOOLEAN;
 	  /** 
-	  */
+	  Beschränkungsdatum. Liegt eine zeitliche Nut-zungsbeschränkung vor, so ist das Datum des letz-ten Beschränkungstages anzugeben. Keine Be-schränkung: 11110101; immer vertraulich: 99990909.*/
       Restricted_until : MANDATORY FORMAT INTERLIS.XMLDate "1582-1-1" .. "2222-12-31";
 
     END Borehole;
 
 
 	/** 
-	*/
+	Eine Kombination der beiden Attribute der Klasse BoreID ergibt eine schweizweit eindeutige Bohrungs-Identifikation.*/
     CLASS BoreID =
 	  /** 
-	  */
+	  Kürzel des Kantons, in dem die Bewilligungsbehörde liegt (Alternativ auch Bundeskürzel, etc.). In Kombination mit dem Attribut BoreID_Contact ergibt sich damit eine eindeutige ID für eine Bohrung.*/
 	  Code_Contact : MANDATORY TEXT*1111;
 	  /**
-	  */
+	  Bohrungs-ID der Kontaktstelle. Ist durch die Kontaktstelle (i.d.R. kantonale Bewilligungsbehörde oder geologische Informationsstelle) zu vergeben. In Kombination mit dem Kantonskürzel (oder CH für Bund) eindeutig.*/
 	  BoreID_Contact : MANDATORY TEXT*254;
 	
 	END BoreID;
 
 
 	/** 
-	*/
+	Die Klasse Contact umfasst alle Attribute, die einen Kontakt beschreiben, der bei einer be-schränkten Nutzung der Bohrangaben als Anfragestelle für eine Freigabe oder einer teilwei-sen Freigabe dient.*/
     CLASS Contact =
-	/** 
-	*/
-      Kind : MANDATORY TEXT*1111;!!BoreholeModelLookUp_V1_0.Borehole_Data_Catalogues.Ref_Icon101;
-      /** Name des Kontakts
-      */
+	  /** 
+	  Information zur Art des Kontaktes (z.B. kantonale Bewilligungsbehörde, Bundesbehörde, Privatwirtschaft: begleitendes Fachbüro, etc.). Mindestkon-takt ist nach Möglichkeit immer die Bewilligungsbe-hörde.*/
+      Kind : MANDATORY BoreholesCatalogues_V1.Catalogues.Ref_Icon101;
+      /**
+      Name der Kontaktstelle (z.B. Amt für…). Pflichtfeld.*/
 	  Name : MANDATORY TEXT;
-      /** Adresse: die Struktur dieses Attributes ist in der Struktur "Address" beschrieben
-      */
+      /**
+      Adresse: die Struktur dieses Attributes ist in der Struktur "Address" beschrieben */
 	  Address : Address;
-      /** Telefon-Nr., gemäss definierter Struktur von Tel. Nummern
-      */
+      /**
+      Telefon-Nr., gemäss definierter Struktur von Tel. Nummern*/
 	  Telefon : TEXT;
-      /** e-mail-Adresse, gemäss definierter Struktur von e-mail-Adressen
-      */
+      /** 
+      e-mail-Adresse, gemäss definierter Struktur von e-mail-Adressen*/
 	  Email : URI;
-      /** URL von Websites, gemäss definierter Struktur von URLs
-      */
+      /** 
+      URL von Websites, gemäss definierter Struktur von URLs*/
 	  Website : URI;
 
  	END Contact;
@@ -126,14 +130,14 @@ VERSION "2022-02-21" =
 !! ASSOCIATIONS
 !!****************************************
 	  /** 
-	  */
+	  Eine Bohrung besitzt mindest eine bis viele eindeutige IDs. Eine ID gehört genau zu einer Bohrung*/
 	  ASSOCIATION Borehole_BoreID =
       Borehole -<#> {1} Borehole;
       BoreID -- {1..*} BoreID;
       END Borehole_BoreID;
 
-	  /** 
-	  */
+	  /** ACHTUNG: hier besteht ein konzeptueller Fehler! ein Kontakt kann zu mehreren Bohrungen zugeordnert werden.
+	  Eine Bohrung besitzt mindestens einen bis viele Kontakt. Ein Kontakt gehört genau zu einer Bohrung*/
 	  ASSOCIATION Borehole_Contact =
       Borehole -<#> {1} Borehole;
       Contact -- {1..*} Contact;
@@ -147,45 +151,42 @@ VERSION "2022-02-21" =
       END BoreID_Contact;
 
 
-  END Inner_Core;
+  END InnerCore;
 
 !!****************************************
 !! TOPIC 
 !!****************************************
-	/** Topic des erweiterten Kernmodells. Alle Angaben sind Pflicht
-	*/
+  /**
+  Der Erweiterte Kern besteht einzig aus der Klasse Borehole_Extended. In dieser Klasse werden weitere Stamm- bzw. Primärdaten der Bohrung beschrieben. Ihre Angabe ist nciht Pflicht*/
   TOPIC Extended_Core =
-  DEPENDS ON BoreholeModelLookUp_V1_0.Borehole_Data_Catalogues;
+  OID AS INTERLIS.UUIDOID;
+  DEPENDS ON BoreholesCatalogues_V1.Catalogues;
 
 	/** 
-	*/
+	Die Klasse Borehole_Extended gehört zum Erweiterten Kern () und gibt erweiterte Informatio-nen zu der im Inneren Kern beschriebenen Bohrung.*/
   	CLASS Borehole_extended
-  	EXTENDS DM_Borehole_Data_V1_0.Inner_Core.Borehole =
+  	EXTENDS Boreholes_V1.InnerCore.Borehole =
 	  /** 
-	  */
+	  Originalname der Bohrung wie in Bericht, Bohrpro-fil, Dokumentation etc. angegeben. */
   	  Original_Name : TEXT*254;
 	  /** 
-	  */
-  	  Method : BoreholeModelLookUp_V1_0.Borehole_Data_Catalogues.Ref_Ebor102;
+	  Bohrmethode (z.B. gekernt, destruktiv, etc.). */
+  	  Method : BoreholesCatalogues_V1.Catalogues.Ref_Ebor102;
 	  /** 
-	  */
-  	  Purpose : TEXT*254; !!BoreholeModelLookUp_V1_0.Borehole_Data_Catalogues.Ref_Ebor103;
+	  Bohrzweck / Bohranlass (z.B. Rohstoffbohrung, Geotechnik, etc.). Es können mehrere Angaben abgebildet werden. */
+  	  Purpose : BoreholesCatalogues_V1.Catalogues.Ref_Ebor103;
 	  /** 
-	  */
-  	  Status : TEXT*254; !!BoreholeModelLookUp_V1_0.Borehole_Data_Catalogues.Ref_Ebor104;
+	  Status der Bohrung (ausgebaut, verfüllt, in Betrieb, stillgelegt, etc.). */
+  	  Status : BoreholesCatalogues_V1.Catalogues.Ref_Ebor104;
 	  /** 
-	  */
-  	  Depth_Bedrock : 0.000 .. 9999.999 [INTERLIS.m];
+	  Felsoberfläche in m (falls angetroffen), gemessen ab Bohransatzpunkt (Attribut-Wert Elevation_Z). */
+  	  Top_Bedrock : 0.000 .. 9999.999 [INTERLIS.m];
 	  /** 
-	  */
-  		Groundwater : BOOLEAN;
+	  Angabe ob in der Bohrung Grundwasser angetroffen wurde. */
+  	  Groundwater : BOOLEAN;
 
   	END Borehole_extended;
 
   END Extended_Core;
 
-
-
-
-
-END DM_Borehole_Data_V1_0.
+END Boreholes_V1.

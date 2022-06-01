@@ -1,0 +1,321 @@
+INTERLIS 2.3;
+
+/** Datenmodell für die Beschreibung der Wertetabelle (Kataloge) des DMGeolAssets
+ */
+MODEL BoreholesGeologyCatalogues_V1 (en)
+AT "https://www.swisstopo.ch"
+VERSION "2022-03-28"  =
+  IMPORTS CatalogueObjectTrees_V1,LocalisationCH_V1;
+
+  TOPIC Catalogues =
+    OID AS INTERLIS.UUIDOID;
+
+    /** Codelist für das Attribut BoreholesGeology_V1 - RefHeight
+     */
+    CLASS BoreholeRefHeightItem
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.Item =
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
+    END BoreholeRefHeightItem;
+
+    STRUCTURE BoreholeRefHeightRef
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.MandatoryCatalogueReference =
+      Reference (EXTENDED) : REFERENCE TO (EXTERNAL) BoreholeRefHeightItem;
+    END BoreholeRefHeightRef;
+
+    /** Codelist für das Attribut BoreholesGeology_V1.BoreholesGeology.Stack.Kind
+     */
+    CLASS BoreholeKindItem
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.Item =
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
+    END BoreholeKindItem;
+
+    STRUCTURE BoreholeKindRef
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.MandatoryCatalogueReference =
+      Reference (EXTENDED) : REFERENCE TO (EXTERNAL) BoreholeKindItem;
+    END BoreholeKindRef;
+
+    /** Codelist für das Attribut BoreholesGeology_V1.BoreholesGeology.Stack.Type
+     */
+    CLASS BoreholeTypeItem
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.Item =
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
+    END BoreholeTypeItem;
+
+    STRUCTURE BoreholeTypeRef
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.MandatoryCatalogueReference =
+      Reference (EXTENDED) : REFERENCE TO (EXTERNAL) BoreholeTypeItem;
+    END BoreholeTypeRef;
+
+    /** Codelist für das Attribut BoreholesGeology_V1.BoreholesGeology.Layer.Standard
+     */
+    CLASS LayerStandardItem
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.Item =
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
+    END LayerStandardItem;
+
+    STRUCTURE LayerStandardRef
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.MandatoryCatalogueReference =
+      Reference (EXTENDED) : REFERENCE TO (EXTERNAL) LayerStandardItem;
+    END LayerStandardRef;
+
+    /** Codelist für das Attribut BoreholesGeology_V1.BoreholesGeology.QuatClass.Comp1, Comp2 und Comp3
+     */
+    CLASS QuatCompItem
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.Item =
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
+    END QuatCompItem;
+
+    STRUCTURE QuatCompRef
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.MandatoryCatalogueReference =
+      Reference (EXTENDED) : REFERENCE TO (EXTERNAL) QuatCompItem;
+    END QuatCompRef;
+
+    /** Codelist für das Attribut BoreholesGeology_V1.BoreholesGeology.QuatClass.GSComp1 und GSComp2
+     */
+    CLASS QuatGSCompItem
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.Item =
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
+    END QuatGSCompItem;
+
+    STRUCTURE QuatGSCompRef
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.MandatoryCatalogueReference =
+      Reference (EXTENDED) : REFERENCE TO (EXTERNAL) QuatGSCompItem;
+    END QuatGSCompRef;
+
+    /** Codelist für das Attribut BoreholesGeology_V1.BoreholesGeology.Quatclass.Round
+     */
+    CLASS QuatRoundItem
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.Item =
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
+    END QuatRoundItem;
+
+    STRUCTURE QuatRoundRef
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.MandatoryCatalogueReference =
+      Reference (EXTENDED) : REFERENCE TO (EXTERNAL) QuatRoundItem;
+    END QuatRoundRef;
+
+    /** Codelist für das Attribut BoreholesGeology_V1.BoreholesGeology.Quatclass.Plastic
+     */
+    CLASS QuatPlasticItem
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.Item =
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
+    END QuatPlasticItem;
+
+    STRUCTURE QuatPlasticRef
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.MandatoryCatalogueReference =
+      Reference (EXTENDED) : REFERENCE TO (EXTERNAL) QuatPlasticItem;
+    END QuatPlasticRef;
+
+    /** Codelist für das Attribut BoreholesGeology_V1.BoreholesGeology.Quatclass.Consist
+     */
+    CLASS QuatConsistItem
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.Item =
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
+    END QuatConsistItem;
+
+    STRUCTURE QuatConsistRef
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.MandatoryCatalogueReference =
+      Reference (EXTENDED) : REFERENCE TO (EXTERNAL) QuatConsistItem;
+    END QuatConsistRef;
+
+    /** Codelist für das Attribut BoreholesGeology_V1.BoreholesGeology.Quatclass.Humid
+     */
+    CLASS QuatHumidItem
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.Item =
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
+    END QuatHumidItem;
+
+    STRUCTURE QuatHumidRef
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.MandatoryCatalogueReference =
+      Reference (EXTENDED) : REFERENCE TO (EXTERNAL) QuatHumidItem;
+    END QuatHumidRef;
+
+    /** Codelist für das Attribut BoreholesGeology_V1.BoreholesGeology.Quatclass.Cohesion
+     */
+    CLASS QuatCohesionItem
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.Item =
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
+    END QuatCohesionItem;
+
+    STRUCTURE QuatCohesionRef
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.MandatoryCatalogueReference =
+      Reference (EXTENDED) : REFERENCE TO (EXTERNAL) QuatCohesionItem;
+    END QuatCohesionRef;
+
+    /** Codelist für das Attribut BoreholesGeology_V1.BoreholesGeology.Quatclass.OrgMat
+     */
+    CLASS QuatOrgMatItem
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.Item =
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
+    END QuatOrgMatItem;
+
+    STRUCTURE QuatOrgMatRef
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.MandatoryCatalogueReference =
+      Reference (EXTENDED) : REFERENCE TO (EXTERNAL) QuatOrgMatItem;
+    END QuatOrgMatRef;
+
+    /** Codelist für das Attribut BoreholesGeology_V1.BoreholesGeology.Quatclass.Shape
+     */
+    CLASS QuatShapeItem
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.Item =
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
+    END QuatShapeItem;
+
+    STRUCTURE QuatShapeRef
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.MandatoryCatalogueReference =
+      Reference (EXTENDED) : REFERENCE TO (EXTERNAL) QuatShapeItem;
+    END QuatShapeRef;
+
+    /** Codelist für das Attribut BoreholesGeology_V1.BoreholesGeology.Quatclass.Shape
+     */
+    CLASS QuatColorItem
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.Item =
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
+    END QuatColorItem;
+
+    STRUCTURE QuatColorRef
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.MandatoryCatalogueReference =
+      Reference (EXTENDED) : REFERENCE TO (EXTERNAL) QuatColorItem;
+    END QuatColorRef;
+
+    /** Codelist für das Attribut BoreholesGeology_V1.BoreholesGeology.Quatclass.Alteration
+     */
+    CLASS QuatAlterationItem
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.Item =
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
+    END QuatAlterationItem;
+
+    STRUCTURE QuatAlterationRef
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.MandatoryCatalogueReference =
+      Reference (EXTENDED) : REFERENCE TO (EXTERNAL) QuatAlterationItem;
+    END QuatAlterationRef;
+
+    /** Codelist für das Attribut BoreholesGeology_V1.BoreholesGeology.Quatclass.Compactness
+     */
+    CLASS QuatCompactnessItem
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.Item =
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
+    END QuatCompactnessItem;
+
+    STRUCTURE QuatCompactnessRef
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.MandatoryCatalogueReference =
+      Reference (EXTENDED) : REFERENCE TO (EXTERNAL) QuatCompactnessItem;
+    END QuatCompactnessRef;
+
+    /** Codelist für das Attribut BoreholesGeology_V1.BoreholesGeology.Quatclass.SoilCondition
+     */
+    CLASS QuatSoilConditionItem
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.Item =
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
+    END QuatSoilConditionItem;
+
+    STRUCTURE QuatSoilConditionRef
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.MandatoryCatalogueReference =
+      Reference (EXTENDED) : REFERENCE TO (EXTERNAL) QuatSoilConditionItem;
+    END QuatSoilConditionRef;
+
+    /** Codelist für das Attribut BoreholesGeology_V1.BoreholesGeology.Quatclass.DetermType
+     */
+    CLASS QuatDetermTypeItem
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.Item =
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
+    END QuatDetermTypeItem;
+
+    STRUCTURE QuatDetermTypeRef
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.MandatoryCatalogueReference =
+      Reference (EXTENDED) : REFERENCE TO (EXTERNAL) QuatDetermTypeItem;
+    END QuatDetermTypeRef;
+
+  END Catalogues;
+
+END BoreholesGeologyCatalogues_V1.
