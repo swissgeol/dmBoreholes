@@ -69,17 +69,17 @@ VERSION "2022-05-31" =
 	  Bezeichnung des Standards nach dem die Interpretation durchgeführt wurde, z.B. Datenmodell Geologie Bemerkung: Je nach Standard werden andere Codelisten in den nachfolgenden Attributen verwendet. Bei der Verwendung anderer Standards müssen die jeweiligen Codelisten zugänglich gemacht werden.*/
 	  Standard : MANDATORY BoreholesGeologyCatalogues_V1.Catalogues.LayerStandardRef;
 	  /**
-==>	  Lithologische Zuordnung der geologischen Einheit Bemerkung: Codeliste aus dem Datenmodell Geologie Anhang C2*/
-	  Ltiho : TEXT;
+	  Lithologische Zuordnung der geologischen Einheit Bemerkung: Codeliste aus dem Datenmodell Geologie Anhang C2*/
+	  Ltiho : BoreholesGeologyCatalogues_V1.Catalogues.LayerLithoRef;
 	  /**
-==>	  Chronostratigraphische Zuordnung der geologischen Einheit Bemerkung: Codeliste aus dem Datenmodell Geologie Anhang C3*/
-	  Chrono : TEXT;
+	  Chronostratigraphische Zuordnung der geologischen Einheit Bemerkung: Codeliste aus dem Datenmodell Geologie Anhang C3*/
+	  Chrono : BoreholesGeologyCatalogues_V1.Catalogues.LayerChronoRef;
 	  /**
-==>	  Zuordnung der geologischen Einheit zu einer tektonischen Einheit Bemerkung: Codeliste aus dem Datenmodell Geologie Anhang C4*/
-	  TectU : TEXT;
+	  Zuordnung der geologischen Einheit zu einer tektonischen Einheit Bemerkung: Codeliste aus dem Datenmodell Geologie Anhang C4*/
+	  TectU : BoreholesGeologyCatalogues_V1.Catalogues.LayerTectURef;
 	  /**
-==>	  Zuordnung der geologischen Einheit zu einer lithostratigraphischen Einheit Bemerkung: Für Codelist aus dem Datenmodell Geologie, siehe Lithostratigraphisches Lexikon der Schweiz (www.strati.ch), da die zugehörigen Werte noch nicht in der aktuellen Dokumentation des Datenmodell Geologie vorliegen*/
-	  Strati : TEXT;
+	  Zuordnung der geologischen Einheit zu einer lithostratigraphischen Einheit Bemerkung: Für Codelist aus dem Datenmodell Geologie, siehe Lithostratigraphisches Lexikon der Schweiz (www.strati.ch), da die zugehörigen Werte noch nicht in der aktuellen Dokumentation des Datenmodell Geologie vorliegen*/
+	  Strati : BoreholesGeologyCatalogues_V1.Catalogues.LayerStratiRef;
 	  
 	END GeolInterpred;
 	
