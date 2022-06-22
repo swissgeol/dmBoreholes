@@ -11,10 +11,10 @@ VERSION "2022-05-31" =
   !! RefHeight definieren
   /**
   Höhenangabe in Meter */
-  Height = 0.000 .. 9999.999;
+  Height = 0.000 .. 9999.999 [INTERLIS.m];
   /**
   Tiefenangaben*/
-  Depth = 0.000 .. 20000.000;
+  Depth = 0.000 .. 20000.000 [INTERLIS.m];
   
   /**
   */
@@ -29,13 +29,13 @@ VERSION "2022-05-31" =
 	  Angabe dazu, welche Elemente im vorliegenden Bohrprofil dargestellt sind: Geol. Einheiten oder tektonische Strukturen*/
 	  Kind : MANDATORY BoreholesGeologyCatalogues_V1.Catalogues.BoreholeKindRef;
 	  /**
-	  Typ des Bohrprofils, z.B. Originalaufnahme */
+	  Typ des Bohrprofils, z.B. Originalaufnahme*/
 	  Type : MANDATORY BoreholesGeologyCatalogues_V1.Catalogues.BoreholeTypeRef;
 	  /**
-	  Kote Bezugspunkt in m ü.M.*/
+	  Kote Bezugspunkt in m.ü.M.*/
 	  ElvRefHeight : MANDATORY Height;
 	  /**
-	  Bezugspunkt von der aus die im Bohrprofil angegebenen Tiefen gemessen wurden */
+	  Bezugspunkt, von dem aus die im Bohrprofil angegebenen Tiefen gemessen wurden*/
 	  RefHeight : MANDATORY BoreholesGeologyCatalogues_V1.Catalogues.BoreholeRefHeightRef;
 	  
 	END Stack;
@@ -47,44 +47,52 @@ VERSION "2022-05-31" =
 	  Tiefe der ersten lithologischen Grenze in gebohrten Metern (Measured Depth)*/
 	  DepthFrom : MANDATORY Depth;
 	  /**
-	  Tiefe der zweiten lithologischen Grenze in gebohrten Metern (Measured Depth) Bemerkung: Constraint: DepthTo > DepthFrom*/
+	  Tiefe der zweiten lithologischen Grenze in gebohrten Metern (Measured Depth) 
+	  Bemerkung: Constraint DepthTo > DepthFrom*/
 	  DepthTo : MANDATORY Depth;
 	  /**
-	  Beschreibung der erbohrten geologischen Einheit Bemerkung: Bei Kernverlust (core loss) wird dies in diesem Feld vermerkt*/
+	  Beschreibung der erbohrten geologischen Einheit 
+	  Bemerkung: Bei Kernverlust (core loss) wird dies in diesem Feld vermerkt*/
 	  LayerDescr : MANDATORY TEXT;
 	  /**
-	  Beschreibung der Zuordnung der erbohrten geologischen Einheit zu einer chrono-, lithostratigraphischen Einheit und / oder einer tektonischen Domäne*/
+	  Beschreibung der Zuordnung der erbohrten geologischen Einheit zu einer chrono-, lithostratigraphischen Einheit und/ oder einer tektonischen Domäne*/
 	  GeolDescr : TEXT;
-	  
 	  /**
-	  DepthTo muss immer grösser als DepthFrom sein */
+	  DepthTo muss immer grösser als DepthFrom sein*/
 	  MANDATORY CONSTRAINT DepthTo > DepthFrom;
 	
 	END Layer;
 
     /**
 	Die Klasse GeolInterpret beschreibt die lithologische, chronostratigraphische, tektonische und lithostratigraphische Interpretation der erbohrten geologischen Einheiten.*/
-    CLASS GeolInterpred =
+	
+    /** Vorschlag: GeolInterpret;  */
+	CLASS GeolInterpred =
 	  /**
-	  Bezeichnung des Standards nach dem die Interpretation durchgeführt wurde, z.B. Datenmodell Geologie Bemerkung: Je nach Standard werden andere Codelisten in den nachfolgenden Attributen verwendet. Bei der Verwendung anderer Standards müssen die jeweiligen Codelisten zugänglich gemacht werden.*/
+	  Bezeichnung des Standards, nach welchem die Interpretation durchgeführt wurde, z.B. Datenmodell Geologie
+	  Bemerkung: Je nach Standard werden andere Codelisten in den nachfolgenden Attributen verwendet. Bei der Verwendung anderer Standards müssen die jeweiligen Codelisten zugänglich gemacht werden.*/
 	  Standard : MANDATORY BoreholesGeologyCatalogues_V1.Catalogues.LayerStandardRef;
 	  /**
-	  Lithologische Zuordnung der geologischen Einheit Bemerkung: Codeliste aus dem Datenmodell Geologie Anhang C2*/
-	  Ltiho : BoreholesGeologyCatalogues_V1.Catalogues.LayerLithoRef;
+	  Lithologische Zuordnung der geologischen Einheit 
+	  Bemerkung: Codeliste aus dem Datenmodell Geologie Anhang C2*/
+	  Litho : BoreholesGeologyCatalogues_V1.Catalogues.LayerLithoRef;
 	  /**
-	  Chronostratigraphische Zuordnung der geologischen Einheit Bemerkung: Codeliste aus dem Datenmodell Geologie Anhang C3*/
+	  Chronostratigraphische Zuordnung der geologischen Einheit 
+	  Bemerkung: Codeliste aus dem Datenmodell Geologie Anhang C3*/
 	  Chrono : BoreholesGeologyCatalogues_V1.Catalogues.LayerChronoRef;
 	  /**
-	  Zuordnung der geologischen Einheit zu einer tektonischen Einheit Bemerkung: Codeliste aus dem Datenmodell Geologie Anhang C4*/
+	  Zuordnung der geologischen Einheit zu einer tektonischen Einheit 
+	  Bemerkung: Codeliste aus dem Datenmodell Geologie Anhang C4*/
 	  TectU : BoreholesGeologyCatalogues_V1.Catalogues.LayerTectURef;
 	  /**
-	  Zuordnung der geologischen Einheit zu einer lithostratigraphischen Einheit Bemerkung: Für Codelist aus dem Datenmodell Geologie, siehe Lithostratigraphisches Lexikon der Schweiz (www.strati.ch), da die zugehörigen Werte noch nicht in der aktuellen Dokumentation des Datenmodell Geologie vorliegen*/
+	  Zuordnung der geologischen Einheit zu einer lithostratigraphischen Einheit 
+	  Bemerkung: Für Codelist aus dem Datenmodell Geologie, siehe Lithostratigraphisches Lexikon der Schweiz (www.strati.ch), da die zugehörigen Werte noch nicht in der aktuellen Dokumentation des Datenmodells Geologie vorliegen*/
 	  Strati : BoreholesGeologyCatalogues_V1.Catalogues.LayerStratiRef;
 	  
 	END GeolInterpred;
 	
 	/**
-	Die Klasse QuatClass beschreibt die quartären Lockergesteine gemäss gängiger Klassifikationsstandards, so wie sie im Feld, d.h. während der Aufnahme der Bohrung, angewendet werden können.*/
+	Die Klasse QuatClass beschreibt die quartären Lockergesteine gemäss gängiger Klassifikationsstandards, wie sie im Feld, d.h. während der Aufnahme der Bohrung, angewendet werden können.*/
     CLASS QuatClass =
 	  /**
 	  Klassifikation der Hauptkomponente oder des gesamten Materials gemäss leicht erweiterter SN 670 004-2b-Norm*/
@@ -155,7 +163,7 @@ VERSION "2022-05-31" =
 	END Stack_Layer;
 	
 	/**
-	Einem Layer ist eine Geologische Interpretation zugeordnet.*/
+	Einer Layer ist eine geologische Interpretation zugeordnet.*/
 	ASSOCIATION Layer_GeolInterpred =
 	  Layer -<#> {1} Layer;
       GeolInterpred -- {0..1} GeolInterpred;	  
