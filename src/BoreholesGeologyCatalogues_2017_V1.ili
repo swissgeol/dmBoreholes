@@ -78,6 +78,74 @@ VERSION "2022-03-28"  =
       Reference (EXTENDED) : REFERENCE TO (EXTERNAL) LayerStandardItem;
     END LayerStandardRef;
 
+    /** Codelist für das Attribut BoreholesGeology_V1.BoreholesGeology.Layer.Litho
+     */
+    CLASS LayerLithoItem
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.Item =
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
+    END LayerLithoItem;
+
+    STRUCTURE LayerLithoRef
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.MandatoryCatalogueReference =
+      Reference (EXTENDED) : REFERENCE TO (EXTERNAL) LayerLithoItem;
+    END LayerLithoRef;
+
+    /** Codelist für das Attribut BoreholesGeology_V1.BoreholesGeology.Layer.Chrono
+     */
+    CLASS LayerChronoItem
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.Item =
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
+    END LayerChronoItem;
+
+    STRUCTURE LayerChronoRef
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.MandatoryCatalogueReference =
+      Reference (EXTENDED) : REFERENCE TO (EXTERNAL) LayerChronoItem;
+    END LayerChronoRef;
+
+    /** Codelist für das Attribut BoreholesGeology_V1.BoreholesGeology.Layer.TectU
+     */
+    CLASS LayerTectUItem
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.Item =
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
+    END LayerTectUItem;
+
+    STRUCTURE LayerTectURef
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.MandatoryCatalogueReference =
+      Reference (EXTENDED) : REFERENCE TO (EXTERNAL) LayerTectUItem;
+    END LayerTectURef;
+
+    /** Codelist für das Attribut BoreholesGeology_V1.BoreholesGeology.Layer.Strati
+     */
+    CLASS LayerStratiItem
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.Item =
+      Code : MANDATORY TEXT;
+	  GeolCode : TEXT;
+      Name : MANDATORY LocalisationCH_V1.MultilingualText;
+      Description : LocalisationCH_V1.MultilingualMText;
+!!    UNIQUE Code;
+!!	  UNIQUE GeolCode;
+    END LayerStratiItem;
+
+    STRUCTURE LayerStratiRef
+    EXTENDS CatalogueObjectTrees_V1.Catalogues.MandatoryCatalogueReference =
+      Reference (EXTENDED) : REFERENCE TO (EXTERNAL) LayerStratiItem;
+    END LayerStratiRef;
+
     /** Codelist für das Attribut BoreholesGeology_V1.BoreholesGeology.QuatClass.Comp1, Comp2 und Comp3
      */
     CLASS QuatCompItem
