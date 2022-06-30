@@ -8,9 +8,8 @@ VERSION "2022-05-31" =
   IMPORTS Boreholes_V1,BoreholesGeologyCatalogues_V1;
 
   DOMAIN
-  !! RefHeight definieren
   /**
-  Höhenangabe in Meter */
+  Höhenangabe in Meter*/
   Height = 0.000 .. 9999.999 [INTERLIS.m];
   /**
   Tiefenangaben*/
@@ -32,7 +31,7 @@ VERSION "2022-05-31" =
 	  Typ des Bohrprofils, z.B. Originalaufnahme*/
 	  Type : MANDATORY BoreholesGeologyCatalogues_V1.Catalogues.BoreholeTypeRef;
 	  /**
-	  Kote Bezugspunkt in m.ü.M.*/
+	  Kote Bezugspunkt in m ü.M.*/
 	  ElvRefHeight : MANDATORY Height;
 	  /**
 	  Bezugspunkt, von dem aus die im Bohrprofil angegebenen Tiefen gemessen wurden*/
@@ -66,7 +65,7 @@ VERSION "2022-05-31" =
     /**
 	Die Klasse GeolInterpret beschreibt die lithologische, chronostratigraphische, tektonische und lithostratigraphische Interpretation der erbohrten geologischen Einheiten.*/
 	
-    /** Vorschlag: GeolInterpret;  */
+    /** Vorschlag: GeolInterpret;*/
 	CLASS GeolInterpred =
 	  /**
 	  Bezeichnung des Standards, nach welchem die Interpretation durchgeführt wurde, z.B. Datenmodell Geologie
@@ -104,7 +103,7 @@ VERSION "2022-05-31" =
 	  Klassifikation der Nebenkomponente gemäss leicht erweiterter SN 670 004-2b-Norm*/
 	  Comp2 : BoreholesGeologyCatalogues_V1.Catalogues.QuatCompRef;
 	  /**
-	  Korngrösse der Nebenkomponente */
+	  Korngrösse der Nebenkomponente*/
 	  GSComp2 : BoreholesGeologyCatalogues_V1.Catalogues.QuatGSCompRef;
 	  /**
 	  Klassifikation der Beimengung gemäss leicht erweiterter SN 670 004-2b-Norm*/
@@ -134,13 +133,13 @@ VERSION "2022-05-31" =
 	  Farbe des Lockergesteins*/
 	  Color : BoreholesGeologyCatalogues_V1.Catalogues.QuatColorRef;
 	  /**
-	  Verwitterungszustand des Lockergesteins */
+	  Verwitterungszustand des Lockergesteins*/
 	  Alteration : BoreholesGeologyCatalogues_V1.Catalogues.QuatAlterationRef;
 	  /**
 	  Lagerungsdichte des Lockergesteins gemäss SN 670 004-2b Norm*/
 	  Compactness : BoreholesGeologyCatalogues_V1.Catalogues.QuatCompactnessRef;
 	  /**
-	  Bodenzustand des Lockergesteins gemäss SN 670 004-2b Norm */
+	  Bodenzustand des Lockergesteins gemäss SN 670 004-2b Norm*/
 	  SoilCondition : BoreholesGeologyCatalogues_V1.Catalogues.QuatSoilConditionRef;
 	  /**
 	  Typ der Bestimmung der Klassifikation des Lockergesteins, z.B. im Feld bestimmt*/
@@ -156,14 +155,14 @@ VERSION "2022-05-31" =
 	END Borehole_Stack;
 	
 	/**
-	Ein Bohrprofil (Stack) kann 0 .. * Layer enthalten */
+	Ein Bohrprofil (Stack) kann 0 .. * Layer enthalten*/
     ASSOCIATION Stack_Layer =
 	  Stack -<#> {1} Stack;
 	  Layer -- {0..*} Layer;
 	END Stack_Layer;
 	
 	/**
-	Einer Layer ist eine geologische Interpretation zugeordnet.*/
+	Einer Layer ist eine geologische Interpretation zugeordnet*/
 	ASSOCIATION Layer_GeolInterpred =
 	  Layer -<#> {1} Layer;
       GeolInterpred -- {0..1} GeolInterpred;	  
